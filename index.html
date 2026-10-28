@@ -1,5 +1,26 @@
+<!doctype html>
+<html lang="ru">
+<head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Киносезон</title>
+<meta name="description" content="Каталог фильмов сезона через их путь по фестивалям и премиям: где фильм впервые показали, что он там получил и докуда дошёл — от Сандэнса и Канн до «Оскара». Сезоны 2024/25, 2025/26 и 2026/27.">
+<link rel="canonical" href="https://singrey3git.github.io/kinosezon/">
+<!-- превью ссылки в мессенджерах и соцсетях -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Киносезон">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://singrey3git.github.io/kinosezon/">
+<meta property="og:title" content="Киносезон — путь фильмов от фестивалей до «Оскара»">
+<meta property="og:description" content="Сандэнс, Берлинале, Канны, Венеция и Торонто — и пять главных премий: Critics' Choice, «Золотой глобус», BAFTA, Actor Awards и «Оскар». Три сезона, 2000+ фильмов.">
+<meta property="og:image" content="https://singrey3git.github.io/kinosezon/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Спираль киносезона с десятью событиями и постерами фестивалей и премий">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Киносезон — путь фильмов от фестивалей до «Оскара»">
+<meta name="twitter:description" content="Каталог фильмов сезона через их путь по фестивалям и премиям: где фильм впервые показали, что он там получил и докуда дошёл — от Сандэнса и Канн до «Оскара». Сезоны 2024/25, 2025/26 и 2026/27.">
+<meta name="twitter:image" content="https://singrey3git.github.io/kinosezon/og.jpg">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -54,6 +75,7 @@ h1{font:700 clamp(32px,5.6vw,54px)/.95 var(--f-display);text-transform:uppercase
 .wheel-bar{display:flex;gap:8px 14px;align-items:center;justify-content:space-between;margin-bottom:6px}
 .wheel-bar .seg{flex:none;margin-left:auto}
 .wheel-bar .hint{font:12px/1.4 var(--f-mono);color:var(--muted);flex:1 1 auto;min-width:0}
+@media (max-width:640px){.wheel-bar{flex-wrap:wrap}.wheel-bar .hint{flex-basis:100%;order:2}.wheel-bar .seg{order:1}}
 .wheel-scroll{overflow-x:auto;overflow-y:hidden}
 .wheel{position:relative;margin:0 auto}
 .wheel-scroll.jumping{overflow:hidden}
