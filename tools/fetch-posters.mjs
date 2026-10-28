@@ -88,7 +88,24 @@ try {
 
 /* ---------- 2. TMDB ---------- */
 const norm = s => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ё/g, "е").replace(/[^a-z0-9а-я]+/g, " ").trim();
-const surname = s => norm(String(s || "").split(/,| и | & /)[0]).split(" ").pop();
+// год сезона, в котором фильм впервые встречается (фестивали этого года)
+const FY = {}; for (const s of ctx.SEASONS) for (const id of Object.keys(s.films || {})) FY[id] ??= s.y0;
+const yearOf = d => +(String(d || "").slice(0, 4)) || 0;
+const recent = (d, f) => { const y = yearOf(d), y0 = FY[f.id] || 2025; return !y || (y >= y0 - 1 && y <= y0 + 1); };
+const dirs = f => String(f.dir || "").split(/,| и | & | and /).map(norm).filter(Boolean);
+// имена режиссёров: «Hong Sangsoo» = «Hong Sang-soo», «Yeo Siew Hua» = «Siew Hua Yeo», совпадение фамилии
+function sameName(a, b) {
+  if (!a || !b) return false;
+  const A = a.split(" "), B = b.split(" ");
+  if (A.join("") === B.join("")) return true;
+  if ([...A].sort().join("") === [...B].sort().join("")) return true;
+  const la = A[A.length - 1], lb = B[B.length - 1];
+  return la.length > 2 && (la === lb || A.includes(lb) && B.includes(la));
+}
+const titles = f => {
+  const wt = WIKI_T[f.id] && WIKI_T[f.id].replace(/\s*\([^)]*\)\s*$/, "");
+  return [...new Set([f.en, wt, f.orig, f.ru].filter(Boolean))];
+};
 async function details(tmdbId) {
   const m = await tmdb(`/movie/${tmdbId}`, { language: "ru-RU" });
   if (!m) return null;
@@ -96,21 +113,44 @@ async function details(tmdbId) {
   if (!poster) { const en = await tmdb(`/movie/${tmdbId}`, { language: "en-US" }); poster = en?.poster_path; }
   return { tmdb: m.id, imdb: m.imdb_id || null, poster: poster ? "https://image.tmdb.org/t/p/w500" + poster : null };
 }
-async function directorMatches(tmdbId, f) {
-  const want = surname(f.dir); if (!want) return true;
+async function directorMatches(tmdbId, f, strict = false) {
+  const want = dirs(f).filter(d => !/[а-я]/.test(d));
+  if (!want.length) return !strict && !dirs(f).length;
   const c = await tmdb(`/movie/${tmdbId}/credits`);
-  return (c?.crew || []).some(p => p.job === "Director" && norm(p.name).split(" ").pop() === want);
+  return (c?.crew || []).some(p => p.job === "Director" && want.some(d => sameName(norm(p.name), d)));
 }
+// 1) поиск по названиям на английском и русском; точное название + режиссёр — в любом году (реставрации классики),
+// 2) свежий фильм того же режиссёра среди первых результатов — названия часто записаны иначе (транслит, иероглифы),
+// 3) фильмография режиссёра: фильм с тем же названием или единственный фильм режиссёра в годы сезона
 async function searchTMDB(f) {
-  const names = [...new Set([f.en, f.orig, f.ru].filter(Boolean))];
-  const ok = new Set(names.map(norm));
-  for (const q of names) {
-    const j = await tmdb("/search/movie", { query: q, include_adult: "false", language: "ru-RU" });
-    const cand = (j?.results || []).filter(m => {
-      const y = +(m.release_date || "0").slice(0, 4);
-      return (!y || (y >= 2022 && y <= 2027)) && (ok.has(norm(m.title)) || ok.has(norm(m.original_title)));
-    }).slice(0, 4);
-    for (const m of cand) if (await directorMatches(m.id, f)) return m.id;
+  const names = titles(f), ok = new Set(names.map(norm)), tried = new Set();
+  for (const q of names) for (const language of ["en-US", "ru-RU"]) {
+    const j = await tmdb("/search/movie", { query: q, include_adult: "false", language });
+    const list = j?.results || [];
+    for (const m of list.filter(m => ok.has(norm(m.title)) || ok.has(norm(m.original_title))).slice(0, 4)) {
+      if (tried.has(m.id)) continue; tried.add(m.id);
+      if (await directorMatches(m.id, f)) return m.id;
+    }
+    for (const m of list.filter(m => recent(m.release_date, f)).slice(0, 3)) {
+      if (tried.has("d" + m.id)) continue; tried.add("d" + m.id);
+      if (await directorMatches(m.id, f, true)) return m.id;
+    }
+  }
+  return byDirector(f, ok);
+}
+async function byDirector(f, ok) {
+  for (const d of dirs(f).filter(d => !/[а-я]/.test(d)).slice(0, 2)) {
+    const p = await tmdb("/search/person", { query: d });
+    for (const person of (p?.results || []).filter(x => sameName(norm(x.name), d)).slice(0, 2)) {
+      const c = await tmdb(`/person/${person.id}/movie_credits`);
+      const films = [...new Map((c?.crew || []).filter(m => m.job === "Director").map(m => [m.id, m])).values()];
+      const named = films.find(m => ok.has(norm(m.title)) || ok.has(norm(m.original_title)));
+      if (named) return named.id;
+      const near = films.filter(m => yearOf(m.release_date) && recent(m.release_date, f));
+      const undated = films.filter(m => !yearOf(m.release_date));
+      if (near.length === 1 && !undated.length) return near[0].id;
+      if (!near.length && undated.length === 1) return undated[0].id;
+    }
   }
   return null;
 }
