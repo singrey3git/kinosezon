@@ -40,6 +40,7 @@ console.log(`Фильмов на странице: ${ids.length}`);
 let out = { films: {} };
 try { out = JSON.parse(fs.readFileSync(OUT, "utf8")); out.films ||= {}; } catch {}
 const res = out.films;
+let OVR = {}; try { OVR = JSON.parse(fs.readFileSync(new URL("./overrides.json", import.meta.url), "utf8")); delete OVR._; } catch {}
 const todo = ids.filter(id => ALL || !res[id]?.poster);
 console.log(`Нужно найти: ${todo.length}`);
 
@@ -154,10 +155,22 @@ async function byDirector(f, ok) {
   }
   return null;
 }
+async function tvDetails(tvId) {
+  const m = await tmdb(`/tv/${tvId}`, { language: "ru-RU" }); if (!m) return null;
+  let poster = m.poster_path;
+  if (!poster) { const en = await tmdb(`/tv/${tvId}`, { language: "en-US" }); poster = en?.poster_path; }
+  return { tmdb: null, imdb: null, poster: poster ? "https://image.tmdb.org/t/p/w500" + poster : null };
+}
 async function one(id) {
-  const f = info(id), w = wd[id] || {};
+  const f = info(id), o = OVR[id] || {}, w = { ...(wd[id] || {}), ...(o.imdb ? { imdb: o.imdb } : {}), ...(o.tmdb ? { tmdb: o.tmdb } : {}) };
   let d = null;
-  if (w.tmdb) d = await details(w.tmdb);
+  if (o.tv) { d = await tvDetails(o.tv); if (d) d.imdb = o.imdb || null; }
+  if (!d && o.imdb && !o.tmdb) {
+    const j = await tmdb(`/find/${o.imdb}`, { external_source: "imdb_id" });
+    const m = j?.movie_results?.[0], t = j?.tv_results?.[0];
+    if (m) d = await details(m.id); else if (t) { d = await tvDetails(t.id); if (d) d.imdb = o.imdb; }
+  }
+  if (!d && w.tmdb) d = await details(w.tmdb);
   if (!d && w.imdb) {
     const j = await tmdb(`/find/${w.imdb}`, { external_source: "imdb_id" });
     const m = j?.movie_results?.[0]; if (m) d = await details(m.id);
