@@ -1,0 +1,1432 @@
+<meta charset="utf-8">
+<title>Киносезон</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: наверху кольцо года (сезоны, внутренняя орбита — фестивали 2025, внешняя — премии 2026), которое разворачивается в линию; под ним события, фильмы сезона или таблица премий. */
+:root{
+  --bg:#eceef1; --surface:#ffffff; --fg:#13161b; --muted:#5a6370; --line:#d2d7de; --accent:#1b4fd8;
+  --gold:#c49a1c; --gold-ink:#1d1606; --gold-soft:#f5ebc8; --gold-text:#8a6a08; --nobe:#e2e2e2; --dot:#fff; --spiral:#8a9099;
+  --s-winter:#d3dfec; --s-spring:#d5e8c9; --s-summer:#f3e2a8; --s-autumn:#efcfae;
+  --sp-winter:#5d8fc4; --sp-spring:#6fa84f; --sp-summer:#d9a52c; --sp-autumn:#cf6e34;
+  --e-sundance:#ED6F2D; --e-berlin:#EC6270; --e-cannes:#806BBD; --e-venice:#6597CE; --e-toronto:#F2E150;
+  --e-critics:#0B2270; --e-globes:#393835; --e-bafta:#411D7B; --e-actors:#193F3F; --e-oscar:#7E5224;
+  --f-display:"Oswald","Arial Narrow",Arial,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.6,.05,.2,1);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1216; --surface:#171b21; --fg:#e7eaee; --muted:#9aa3ae; --line:#2a3039; --accent:#8eaaff;
+  --gold:#d8b13a; --gold-ink:#1d1606; --gold-soft:#3a3220; --gold-text:#e2c25a; --nobe:#3a3a3a; --dot:#fff; --spiral:#9aa1ab;
+  --s-winter:#25384c; --s-spring:#283f2b; --s-summer:#4a3f1d; --s-autumn:#4b3322;
+  --sp-winter:#7fb0e6; --sp-spring:#8ccc68; --sp-summer:#ecc24e; --sp-autumn:#ec8a50;
+  --e-sundance:#F2894F; --e-berlin:#F07C90; --e-cannes:#9C8BD8; --e-venice:#86B3E6; --e-toronto:#F2E150;
+  --e-critics:#6A7FE6; --e-globes:#B8B2A6; --e-bafta:#C07CEB; --e-actors:#4E9A8A; --e-oscar:#C9955A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1216; --surface:#171b21; --fg:#e7eaee; --muted:#9aa3ae; --line:#2a3039; --accent:#8eaaff;
+  --gold:#d8b13a; --gold-ink:#1d1606; --gold-soft:#3a3220; --gold-text:#e2c25a; --nobe:#3a3a3a; --dot:#fff; --spiral:#9aa1ab;
+  --s-winter:#25384c; --s-spring:#283f2b; --s-summer:#4a3f1d; --s-autumn:#4b3322;
+  --sp-winter:#7fb0e6; --sp-spring:#8ccc68; --sp-summer:#ecc24e; --sp-autumn:#ec8a50;
+  --e-sundance:#F2894F; --e-berlin:#F07C90; --e-cannes:#9C8BD8; --e-venice:#86B3E6; --e-toronto:#F2E150;
+  --e-critics:#6A7FE6; --e-globes:#B8B2A6; --e-bafta:#C07CEB; --e-actors:#4E9A8A; --e-oscar:#C9955A; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:22px 56px}
+.wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{text-wrap:balance}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.label{font:600 12px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0}
+
+/* шапка */
+.top{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;justify-content:space-between;border-bottom:2px solid var(--fg);padding-bottom:12px}
+h1{font:700 clamp(32px,5.6vw,54px)/.95 var(--f-display);text-transform:uppercase;margin:0}
+.lede{color:var(--muted);margin:6px 0 0;max-width:80ch;text-wrap:pretty}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;background:var(--surface);padding:3px;gap:2px}
+.seg button{border:0;background:none;padding:6px 13px;border-radius:999px;cursor:pointer;font-weight:500;font-size:14px;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+
+/* ---------- кольцо / линия ---------- */
+.wheel-box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 12px 8px}
+.wheel-bar{display:flex;gap:8px 14px;align-items:center;justify-content:space-between;margin-bottom:6px}
+.wheel-bar .seg{flex:none;margin-left:auto}
+.wheel-bar .hint{font:12px/1.4 var(--f-mono);color:var(--muted);flex:1 1 auto;min-width:0}
+.wheel-scroll{overflow-x:auto;overflow-y:hidden}
+.wheel{position:relative;margin:0 auto}
+.wheel-scroll.jumping{overflow:hidden}
+.season-hot{position:absolute;width:72px;height:72px;margin:-36px 0 0 -36px;border-radius:50%;border:0;padding:0;background:transparent;cursor:pointer;z-index:4}
+.season-hot:hover,.season-hot:focus-visible{background:radial-gradient(circle,color-mix(in srgb,var(--fg) 14%,transparent) 0 40%,transparent 70%);outline:none}
+.season-hot[hidden]{display:none}
+.wheel svg.decor{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.wnode{position:absolute;width:var(--ns);height:var(--ns);margin:calc(var(--ns) / -2) 0 0 calc(var(--ns) / -2);
+  border:3px solid var(--ec);background:var(--surface);border-radius:50%;display:grid;place-items:center;cursor:pointer;padding:0;z-index:2;
+  transition:box-shadow .2s}
+.wnode.k-fest{border-radius:30%}
+.wnode.soon{opacity:.55;border-style:dashed}
+.tile .soon-card{aspect-ratio:2/3;border-radius:4px;border:2px dashed color-mix(in srgb,var(--ec) 60%,var(--line));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted)}
+.tile .soon-card .trophy{width:48%;height:auto;aspect-ratio:3/4;border-radius:8px;opacity:.75}
+.tile .soon-card b{font:600 13px var(--f-mono);letter-spacing:.12em;text-transform:uppercase}
+.chip-sep{width:1px;align-self:stretch;margin:4px 10px;background:var(--line)}
+.ptable th.ph.cur{box-shadow:inset 0 -3px 0 var(--ec)}
+.tsoon{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:120px;min-width:110px;border:2px dashed color-mix(in srgb,var(--line) 70%,var(--muted));border-radius:6px;padding:10px;color:var(--muted);font:12px var(--f-mono);text-align:center}
+.tsoon b{font:600 15px var(--f-display);text-transform:uppercase;color:var(--fg)}
+.tsoon small{font-size:10.5px;margin-top:4px}
+.cat-soon{display:flex;gap:12px;flex-wrap:wrap}
+.cs-card{display:flex;flex-direction:column;gap:4px;justify-content:center;width:160px;aspect-ratio:2/3;max-height:170px;border:2px dashed color-mix(in srgb,var(--ec) 45%,var(--line));border-radius:6px;padding:12px;color:var(--muted);font:12px var(--f-mono)}
+.cs-card b{font:600 18px/1.1 var(--f-display);text-transform:uppercase;color:var(--fg)}
+.st-soon{display:flex;flex-direction:column;gap:6px;border:2px dashed color-mix(in srgb,var(--ec) 55%,var(--line));border-radius:8px;padding:16px 18px;color:var(--muted)}
+.st-soon b{font:700 clamp(20px,2.4vw,28px)/1.05 var(--f-display);text-transform:uppercase;color:var(--fg)}
+.wnode{touch-action:none;cursor:grab}.wnode.dragging{cursor:grabbing;z-index:5}
+.wnode .trophy{width:100%;height:100%;border-radius:inherit;padding:12%}
+.wnode:hover{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--ec)}
+.wnode[aria-current="true"]{box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--ec)}
+.wlabel{position:absolute;left:50%;top:50%;width:max-content;max-width:92px;text-align:center;pointer-events:none;
+  transform:translate(calc(-50% + var(--lx,0px)),calc(-50% + var(--ly,0px)));
+  font:600 11.5px/1.1 var(--f-display);text-transform:uppercase;letter-spacing:.02em;color:var(--fg)}
+.wlabel small{display:block;font:500 10px/1.3 var(--f-mono);color:var(--muted);text-transform:none;letter-spacing:0;margin-top:2px}
+.wnode[aria-current="true"] .wlabel{color:color-mix(in srgb,var(--ec),var(--fg) 28%)}
+.wcenter{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;
+  pointer-events:none;width:var(--cw,150px)}
+.wcenter .trophy{width:var(--ct,56px);height:calc(var(--ct,56px) * 1.35);border-radius:10px;padding:6%;border:2px solid var(--ec,var(--line))}
+.wcenter b{font:600 15px/1.1 var(--f-display);text-transform:uppercase}
+.wcenter span{font:11px/1.3 var(--f-mono);color:var(--muted)}
+@media (max-width:620px){.wheel.ring .wlabel{display:none}.wcenter b{font-size:13px}}
+@media (max-width:480px){.seg button{padding:6px 9px;font-size:13px}}
+
+/* статуэтка: фото, а пока его нет — эмблема */
+
+/* постер */
+.poster{position:relative;aspect-ratio:2/3;width:100%;max-width:100%;border-radius:4px;overflow:hidden;color:#fff;isolation:isolate;
+  display:flex;flex-direction:column;justify-content:space-between;padding:9px;background:#333;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.poster::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--art)}
+.poster::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,rgba(0,0,0,.55),rgba(0,0,0,0) 50%,rgba(0,0,0,.25))}
+.poster .pt,.poster .pf{text-shadow:0 1px 3px rgba(0,0,0,.45)}
+.poster .pf{font:500 9px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.poster .pt{font:600 var(--ts,18px)/.98 var(--f-display);text-transform:uppercase;overflow-wrap:anywhere;hyphens:auto;text-wrap:balance}
+.poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;opacity:0;transition:opacity .35s}
+.poster.has-img img{opacity:1}
+.poster .mark{position:absolute;z-index:2;top:7px;left:7px;background:var(--gold);color:var(--gold-ink);font:600 9.5px/1 var(--f-mono);letter-spacing:.05em;padding:5px 6px;border-radius:3px;text-transform:uppercase;max-width:calc(100% - 14px)}
+.poster.lg{padding:14px}
+.poster.lg .pt{font-size:var(--tsl,34px)}
+
+/* обзор */
+.tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.tile{display:flex;flex-direction:column;gap:7px;background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--ec);border-radius:6px;padding:10px;cursor:pointer;text-align:left;min-width:0}
+.tile .th{display:flex;align-items:center;gap:8px}
+.tile .th .trophy{width:30px;height:40px;border-radius:5px;border:1px solid var(--line);padding:2px}
+.tile .th .logo{max-width:100%}
+.tile .k{font:600 11px/1.2 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:color-mix(in srgb,var(--ec),var(--fg) 28%)}
+.tile .w{font:600 16px/1.1 var(--f-display);text-transform:uppercase}
+.tile .p{font-size:12px;color:var(--muted)}
+.row-label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+@media (max-width:900px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:520px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* событие */
+.event{display:flex;flex-direction:column;gap:20px}
+.ev-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;border-top:6px solid var(--ec);padding-top:12px}
+.ev-head .trophy{width:96px;height:128px;border-radius:10px;border:3px solid var(--ec);padding:8px}
+.ev-head .logo{margin-bottom:6px}
+.ev-head h2{font:700 clamp(24px,4vw,38px)/1 var(--f-display);text-transform:uppercase;margin:0;color:color-mix(in srgb,var(--ec),var(--fg) 28%)}
+.ev-head .info{font:13px var(--f-mono);color:var(--muted);display:block;margin-top:4px}
+.ev-nav{display:flex;gap:8px;margin-left:auto}
+.ev-nav button{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px}
+.ev-nav button:disabled{opacity:.4;cursor:default}
+.hero{display:grid;grid-template-columns:minmax(220px,380px) minmax(0,1fr);gap:22px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;cursor:pointer;text-align:left}
+.hero .pz{font:600 13px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-text);margin:0;display:flex;align-items:center;gap:10px}
+.hero .pz .trophy{width:40px;height:52px;border-radius:6px;border:2px solid var(--gold);padding:3px}
+.hero h3{font:700 clamp(28px,5vw,50px)/1 var(--f-display);text-transform:uppercase;margin:8px 0 4px}
+.hero .orig{color:var(--muted);margin:0}
+.hero .dir{margin:10px 0 0;font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.pill{font:500 12px var(--f-body);background:var(--gold-soft);border:1px solid var(--gold);padding:3px 9px;border-radius:999px}
+.pill.out{background:transparent;border-color:var(--line);color:var(--muted)}
+@media (max-width:560px){.hero{grid-template-columns:1fr;padding:14px}.hero .poster{max-width:300px}}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:7px 14px}
+.shelf>.award{display:grid;grid-row:span 5;grid-template-rows:subgrid;gap:7px;align-content:start}
+.shelf>.award .what{display:flex;align-items:flex-end;min-height:0}
+.shelf>.award .who{padding-bottom:14px}
+@supports not (grid-template-rows:subgrid){.shelf>.award{display:flex;grid-row:auto}.shelf>.award .what{min-height:4em}}
+.award{display:flex;flex-direction:column;gap:7px;cursor:pointer;background:none;border:0;padding:0;text-align:left;min-width:0}
+.award .what{font:600 11px/1.3 var(--f-mono);letter-spacing:.05em;text-transform:uppercase;border-left:3px solid var(--gold);padding-left:7px;min-height:2.6em}
+.award .t,.film .t{font-weight:600;font-size:13.5px;line-height:1.25}
+.award .who,.film .d{font-size:12px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:18px 12px}
+.film{display:flex;flex-direction:column;gap:6px;cursor:pointer;background:none;border:0;padding:0;text-align:left;min-width:0}
+@media (prefers-reduced-motion:no-preference){.film .poster,.award .poster,.tile .poster{transition:transform .18s}.film:hover .poster,.award:hover .poster,.tile:hover .poster{transform:translateY(-3px)}}
+@media (max-width:440px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 8px}.shelf{grid-template-columns:repeat(2,minmax(0,1fr))}}
+details.prog{background:var(--surface);border:1px solid var(--line);border-radius:6px}
+details.prog summary{cursor:pointer;padding:12px 14px;display:flex;justify-content:space-between;gap:10px;align-items:baseline;list-style:none}
+details.prog summary::-webkit-details-marker{display:none}
+details.prog summary b{font:600 16px var(--f-display);text-transform:uppercase;letter-spacing:.02em}
+details.prog summary span{font:12px var(--f-mono);color:var(--muted);margin-left:auto}
+details.prog summary::after{content:"+";font:600 18px var(--f-mono);color:var(--muted)}
+details.prog[open] summary::after{content:"−"}
+details.prog .shelf{padding:4px 14px 16px}
+.progs{display:flex;flex-direction:column;gap:8px}
+.honor{list-style:none;margin:0;padding:0}
+.honor li{display:flex;flex-wrap:wrap;gap:4px 12px;border-bottom:1px dashed var(--line);padding:6px 0}
+.honor .h{font:600 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);min-width:15em}
+.cat{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:14px}
+.cat h3{font:600 20px/1.1 var(--f-display);text-transform:uppercase;margin:0}
+.cat-row{overflow-x:auto;padding-bottom:6px}
+.cat-in{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(118px,160px);gap:12px 18px;align-items:start}
+.cat-in.many{justify-content:space-between}
+.cat-in .win{grid-column:span 2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;background:var(--gold-soft);border:1px solid var(--gold);border-radius:6px;padding:8px;cursor:pointer;text-align:left}
+.cat-in .win .lab{font:600 10.5px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-text)}
+.cat-in .win .t{font:600 17px/1.15 var(--f-display);text-transform:uppercase;margin-top:4px}
+.cat-in .win .who{font-size:13px;margin-top:6px}
+.cat-in .nom{display:flex;flex-direction:column;gap:5px;background:none;border:0;padding:0;cursor:pointer;text-align:left;min-width:0}
+.cat-in .nom .t{font-weight:600;font-size:12.5px;line-height:1.25}
+.cat-in .nom .who{font-size:11.5px;color:var(--muted)}
+
+/* фильмы сезона */
+.fbar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--surface);padding:6px 12px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.fbar select,.fbar input{font:14px var(--f-body);padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)}
+.fbar input{flex:1 1 200px;min-width:0}
+.fbar .cnt{font:12px var(--f-mono);color:var(--muted);margin-left:auto}
+.path{display:grid;grid-template-columns:repeat(5,1fr) 3px repeat(5,1fr);gap:2px;height:9px}
+.path i:nth-child(n+6){grid-column-end:span 1}.path i:nth-child(6){grid-column-start:7}
+.path i{border-radius:1.5px;background:var(--nobe)}
+.path i.l1,.path i.l2,.path i.l3{background:var(--ec)}
+.path i.l2,.path i.l3{background-image:radial-gradient(circle at 50% 50%,var(--dot) 0 1.6px,transparent 2.1px)}
+.path i.l1{box-shadow:inset 0 0 0 0 transparent}
+.plegend{display:flex;flex-wrap:wrap;gap:6px 16px;font:12px var(--f-mono);color:var(--muted)}
+.plegend span{display:inline-flex;gap:6px;align-items:center}
+.plegend b{display:inline-block;width:14px;height:9px;border-radius:1.5px;background:var(--fg);opacity:.75}
+.plegend b.lg0{background:var(--nobe);opacity:1}.plegend b.lg2,.plegend b.lg3{background-image:radial-gradient(circle,var(--dot) 0 1.6px,transparent 2.1px)}.plegend b.lg3{height:13px}
+
+/* таблица премий */
+.tbl-note{color:var(--muted);font-size:13.5px;max-width:90ch;margin:0}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.ptable{border-collapse:separate;border-spacing:0;min-width:100%}
+.ptable th,.ptable td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);vertical-align:middle;text-align:center;padding:10px}
+.ptable thead th{text-align:center;background:var(--surface);vertical-align:bottom}
+.ptable thead th.corner{font:600 11px/1.25 var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.ptable th.ph{border-top:5px solid var(--ec);min-width:128px}
+.phin{display:flex;gap:8px;align-items:flex-end}
+.phin .trophy{width:34px;height:46px;border-radius:5px;border:1px solid var(--line);padding:2px}
+.phin b{display:block;font:600 15px/1.1 var(--f-display);text-transform:uppercase;margin-top:5px}
+.phin span:not(.logo){display:block;font:11px var(--f-mono);color:var(--muted);font-weight:400}
+
+.ptable tbody tr:last-child th,.ptable tbody tr:last-child td{border-bottom:0}
+.ptable .rowh{position:sticky;left:0;z-index:2;background:var(--surface);min-width:120px;max-width:150px;box-shadow:1px 0 0 var(--line);font:600 14px/1.15 var(--f-display);text-transform:uppercase;text-align:left;vertical-align:middle}
+.ptable .scorerow .rowh,.ptable .scorerow td{border-top:2px solid var(--fg)}
+.ptable tr.grp th{background:var(--bg);padding:8px 10px;text-align:left;border-right:0}
+.ptable tr.grp th span{position:sticky;left:10px;font:600 12px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--fg)}
+
+.ptable td.empty{color:var(--muted);font:12px var(--f-mono);text-align:center;vertical-align:middle;background:repeating-linear-gradient(135deg,transparent 0 8px,var(--bg) 8px 9px)}
+.tcell{display:grid;grid-auto-flow:column;grid-auto-columns:96px;gap:10px;justify-content:center}
+.tcard{display:flex;flex-direction:column;gap:4px;background:none;border:0;padding:0;cursor:pointer;text-align:center;min-width:0}
+.tcard .poster{padding:6px;border-radius:3px}
+.tcard .poster .pt{font-size:12px}
+.tcard .poster .pf{display:none}
+.tcard .t{font-weight:600;font-size:12px;line-height:1.2}
+.tcard .who{font-size:11.5px;line-height:1.25}
+.tcard .nt{font:10.5px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.tcard .aw{font:600 10.5px/1.3 var(--f-mono);color:var(--gold-text)}
+.ptable td.score .sc2{display:block;font:600 16px var(--f-display);color:var(--muted);margin-top:4px}
+.fbar .seg{margin-right:6px}
+.ptable td.score{font:600 22px var(--f-display);vertical-align:middle;text-align:center;min-width:96px}
+.ptable td.score small{display:block;font:11px var(--f-mono);color:var(--muted)}
+
+/* статус и подвал */
+.status{font:12.5px var(--f-mono);color:var(--muted);margin:0}
+details.missing{font-size:13px;color:var(--muted)}
+details.missing summary{cursor:pointer;font:12.5px var(--f-mono)}
+details.missing ul{columns:3 220px;margin:8px 0 0;padding-left:18px}
+footer{color:var(--muted);font-size:13px;line-height:1.5;border-top:1px solid var(--line);padding-top:18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 32px}
+footer h4{margin:0 0 6px;font:600 12px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--fg)}
+footer p{margin:0 0 8px}
+@media (max-width:760px){footer{grid-template-columns:1fr}}
+.season-sw{display:flex;align-items:center;flex-wrap:wrap;gap:6px 18px}
+.ss-nav{display:inline-flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px}
+.ss-arr{border:0;background:none;width:30px;height:30px;border-radius:50%;font:600 18px/1 var(--f-body);cursor:pointer;color:var(--fg)}
+.ss-arr:hover:not(:disabled){background:var(--bg)}.ss-arr:disabled{opacity:.3;cursor:default}
+.ss-chip{border:0;background:none;border-radius:999px;padding:5px 11px;font:600 13px var(--f-mono);cursor:pointer;color:var(--muted);display:inline-flex;gap:6px;align-items:baseline}
+.ss-chip[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.ss-chip small{font:500 10px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;opacity:.75}
+.lede2{margin-top:4px;font:600 13px var(--f-mono);letter-spacing:.04em}
+
+/* карточка фильма */
+dialog{border:0;padding:0;border-radius:10px;background:var(--surface);color:var(--fg);width:min(760px,calc(100vw - 32px));max-height:calc(100dvh - 40px);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(10,12,16,.6)}
+.card{display:grid;grid-template-columns:200px minmax(0,1fr);gap:20px;padding:20px}
+.card h3{font:700 30px/1.02 var(--f-display);text-transform:uppercase;margin:0 0 4px}
+.card .orig{color:var(--muted);margin:0}
+.trip{list-style:none;padding:0;margin:16px 0 0;display:flex;flex-direction:column}
+.trip li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;padding-bottom:10px;position:relative}
+.trip li::before{content:"";position:absolute;left:12px;top:34px;bottom:0;width:2px;background:var(--line)}
+.trip li:last-child::before{display:none}
+.trip .trophy{width:26px;height:34px;border-radius:5px;border:2px solid var(--ec);padding:2px}
+.trip li.g .trophy{box-shadow:0 0 0 2px var(--gold)}
+.trip .e{font:600 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:color-mix(in srgb,var(--ec),var(--fg) 28%)}
+.trip .x{font-size:14px}
+.trip .x.win{font-weight:600}
+.card .links{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.card .links a{font:500 13px var(--f-body);text-decoration:none;border:1px solid var(--line);padding:6px 11px;border-radius:6px}
+.card .close{position:absolute;top:8px;right:8px;border:0;background:var(--bg);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px}
+@media (max-width:560px){.card{grid-template-columns:1fr;padding:16px}.card .poster{max-width:160px}}
+
+/* встроенные фото статуэток и логотипы событий */
+.trophy{background:#fff no-repeat center/contain;background-origin:content-box;padding:9%;display:inline-block;flex:none}
+.logo{display:inline-block;flex:none;height:var(--lh,34px);width:calc(var(--lh,34px) * var(--ar,2.5));background:no-repeat center/contain;background-origin:content-box;padding:4px 6px;box-sizing:content-box;border-radius:5px;border:1px solid var(--line)}
+.tr-sundance{background-image:url(img/trophy/sundance.webp)}
+.lg-sundance{background-image:url(img/logo/sundance.webp);--ar:2.712;background-color:#ffffff}
+.tr-berlin{background-image:url(img/trophy/berlin.webp)}
+.lg-berlin{background-image:url(img/logo/berlin.webp);--ar:1.669;background-color:#ffffff}
+.tr-cannes{background-image:url(img/trophy/cannes.webp)}
+.lg-cannes{background-image:url(img/logo/cannes.webp);--ar:1.438;background-color:#111111}
+.tr-venice{background-image:url(img/trophy/venice.webp)}
+.lg-venice{background-image:url(img/logo/venice.webp);--ar:1.788;background-color:#ffffff}
+.tr-toronto{background-image:url(img/trophy/toronto.webp)}
+.lg-toronto{background-image:url(img/logo/toronto.webp);--ar:1.944;background-color:#ffffff}
+.tr-critics{background-image:url(img/trophy/critics.webp)}
+.lg-critics{background-image:url(img/logo/critics.webp);--ar:1.775;background-color:#ffffff}
+.tr-globes{background-image:url(img/trophy/globes.webp)}
+.lg-globes{background-image:url(img/logo/globes.webp);--ar:2.288;background-color:#f6f6f6}
+.tr-bafta{background-image:url(img/trophy/bafta.webp)}
+.lg-bafta{background-image:url(img/logo/bafta.webp);--ar:3.117;background-color:#ffffff}
+.tr-actors{background-image:url(img/trophy/actors.webp)}
+.lg-actors{background-image:url(img/logo/actors.webp);--ar:1.775;background-color:#ffffff}
+.tr-oscar{background-image:url(img/trophy/oscar.webp)}
+.lg-oscar{background-image:url(img/logo/oscar.webp);--ar:2.181;background-color:#ffffff}
+
+.event>p.label,.event>.progs>p.label{font:700 15px/1.3 var(--f-mono);letter-spacing:.1em;color:var(--fg);margin-top:26px;padding-top:16px;border-top:2px solid color-mix(in srgb,var(--ec,var(--line)) 55%,var(--line))}
+.event>p.label:first-child{margin-top:0;padding-top:0;border-top:0}
+.cat{margin-top:16px}.cat h3{font-size:22px;font-weight:700}
+/* постеры событий */
+
+.bn{display:block;background-size:cover;background-position:center;background-repeat:no-repeat;background-color:var(--ec)}
+.ev-banner{position:relative;margin-bottom:-64px}
+.ev-banner .bn{width:100%;aspect-ratio:16/9;border-radius:12px;box-shadow:0 18px 40px -22px var(--ec)}
+.ev-head.has-bn{border-top:0;padding:0 18px}
+.ev-head.has-bn .trophy{position:relative;z-index:1;background-color:var(--surface);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.ev-head.has-bn>div:not(.ev-nav){align-self:flex-end}
+.tile .bn{aspect-ratio:16/9;border-radius:6px;margin:-10px -10px 2px;border-radius:5px 5px 0 0}
+.tile{border-top:0;overflow:hidden}
+@media (max-width:560px){.ev-banner{margin-bottom:-40px}.ev-head.has-bn{padding:0 8px}}
+/* витрина рядом со спиралью */
+.wheel-main{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:center}
+@media (max-width:980px){.wheel-main{grid-template-columns:1fr}}
+.wheel-scroll{min-width:0}
+.showcase{display:flex;flex-direction:column;gap:12px;align-self:stretch;justify-content:center;align-items:center;border-left:1px solid var(--line);padding-left:18px;min-height:420px}
+@media (max-width:980px){.showcase{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:14px;min-height:0}}
+.wheel-main.line{grid-template-columns:1fr}.wheel-main.line:not(.has-stage) .showcase{display:none}
+.wheel-main.has-stage:not(.line){grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center}
+.wheel-main.no-side{grid-template-columns:1fr}.wheel-main.no-side .showcase{display:none}
+.wheel-box.forced .seg{display:none}
+.wheel-main.abs{display:block;position:relative}
+.wheel-main.abs .wheel-scroll{position:absolute;left:0;top:0;width:100%}
+.wheel-main.abs .showcase,.wheel-main.abs.line .showcase{position:absolute;inset:0;display:block;border:0;padding:0;min-height:0;pointer-events:none}
+.wheel-main.abs .st-banner,.wheel-main.abs .st-info,.wheel-main.abs .sc-wrap{position:absolute;pointer-events:auto}
+.wheel-main.abs .st-info{z-index:2}
+.wheel-main.abs .st-head,.wheel-main.abs.line .st-head{padding:0 14px}
+.wheel-main.abs .st-head .trophy,.wheel-main.abs.line .st-head .trophy{margin-top:var(--ov,-62px)}
+.showcase{transition:opacity .45s ease,transform .45s ease}
+.showcase.sc-hide{opacity:0;transform:translateY(14px)}
+.sc-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+.showcase.has-st{border-left:0;padding-left:0;min-height:0;display:block}
+.wheel-main.line .showcase.has-st{border-top:1px solid var(--line);padding-top:14px}
+.stage{display:flex;flex-direction:column;gap:12px}
+.st-banner .bn{width:100%;aspect-ratio:16/9;border-radius:10px;box-shadow:0 16px 36px -22px var(--ec)}
+.st-banner{position:relative}
+.st-banner .bn-old{position:absolute;inset:0;height:100%;pointer-events:none;box-shadow:none;background-color:transparent}
+#season-title{display:inline-block}
+.st-info{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.st-head{display:flex;align-items:flex-end;gap:14px;padding:0 14px}
+.st-head .trophy{margin-top:-62px}
+.st-head .trophy{flex:none;width:84px;height:112px;border-radius:10px;border:3px solid var(--ec);padding:7px;background-color:var(--surface);box-shadow:0 6px 18px rgba(0,0,0,.25);position:relative;z-index:1}
+.st-head h2{font:700 clamp(20px,2.4vw,30px)/1.02 var(--f-display);text-transform:uppercase;margin:0;color:color-mix(in srgb,var(--ec),var(--fg) 28%)}
+.st-head .info{font:12px var(--f-mono);color:var(--muted);display:block;margin-top:4px}
+.st-win{display:grid;grid-template-columns:118px minmax(0,1fr);gap:16px;align-items:center;background:var(--bg);border:1px solid var(--line);border-left:5px solid var(--ec);border-radius:8px;padding:10px;cursor:pointer;text-align:left;color:inherit}
+.st-win:hover{border-color:var(--ec)}
+.st-win .poster{padding:7px}.st-win .poster .pt{font-size:14px}
+.st-wt{display:flex;flex-direction:column;gap:3px;min-width:0}
+.st-wt .pz{font:600 11px/1.3 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--gold-text)}
+.st-wt b{font:700 clamp(22px,2.6vw,34px)/1 var(--f-display);text-transform:uppercase}
+.st-wt .orig{color:var(--muted);font-size:13px}.st-wt .dir{font-size:14px}
+.stage .ev-nav{margin-left:0;justify-content:space-between}
+.wheel-main.line .stage{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:18px;align-items:center}
+.wheel-main.line .st-head{padding:0}.wheel-main.line .st-head .trophy{margin-top:0}
+@media (max-width:980px){.wheel-main.line .stage{grid-template-columns:1fr}.wheel-main.line .st-head{padding:0 14px}.wheel-main.line .st-head .trophy{margin-top:-62px}}
+@media (max-width:980px){.wheel-main.has-stage:not(.line){grid-template-columns:1fr}.showcase.has-st{border-top:1px solid var(--line);padding-top:14px}}
+@media (max-width:560px){.st-win{grid-template-columns:88px minmax(0,1fr)}.st-head .trophy{width:64px;height:86px;margin-top:-44px}}
+.sc-cap{margin:0;font:700 18px/1.15 var(--f-display);text-transform:uppercase;text-align:center;color:color-mix(in srgb,var(--ec),var(--fg) 28%)}
+.sc-logo{height:78px;border-radius:8px;border:1px solid var(--line);background-repeat:no-repeat;background-position:center;background-size:contain;background-origin:content-box;padding:10px 14px}
+.sc-trophy{width:100%;max-width:280px;height:auto;aspect-ratio:3/4;border-radius:12px;background-color:#fff;background-repeat:no-repeat;background-position:center;background-size:contain;background-origin:content-box;padding:16px;border:3px solid var(--ec)}
+.sc-text{display:flex;flex-direction:column;gap:2px}
+.sc-text b{font:700 20px/1.1 var(--f-display);text-transform:uppercase;color:color-mix(in srgb,var(--ec),var(--fg) 28%)}
+.sc-text span{font:12px/1.4 var(--f-mono);color:var(--muted)}
+.sc-win{display:grid;grid-template-columns:62px minmax(0,1fr);gap:10px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px;cursor:pointer;text-align:left}
+.sc-win .poster{padding:4px}.sc-win .poster .pt{font-size:10px}.sc-win .poster .pf{display:none}
+.sc-win small{display:block;font:600 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--gold-text)}
+.sc-win b{display:block;font:600 16px/1.15 var(--f-display);text-transform:uppercase}
+.sc-win em{display:block;font-style:normal;font-size:12px;color:var(--muted)}
+.sc-shelf{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px 8px}
+.sc-item{display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:0;padding:0;cursor:pointer;min-width:0}
+.sc-item .trophy{width:100%;aspect-ratio:3/4;height:auto;border-radius:8px;border:2px solid var(--ec);padding:6px}
+.sc-item span{font:600 9.5px/1.1 var(--f-display);text-transform:uppercase;text-align:center;overflow-wrap:anywhere;max-width:100%}
+.sc-item:hover .trophy,.sc-item:focus-visible .trophy{box-shadow:0 0 0 3px var(--ec)}
+.sc-hint{font:12px var(--f-mono);color:var(--muted);margin:0}
+.sc-trophy{max-height:400px}
+@media (max-width:980px){.sc-trophy{max-width:180px}.sc-shelf{grid-template-columns:repeat(10,minmax(0,1fr))}}
+@media (max-width:560px){.sc-shelf{grid-template-columns:repeat(5,minmax(0,1fr))}}
+/* плитки обзора: крупный логотип */
+.tile .tlogo{display:block;height:56px;border-radius:6px;border:1px solid var(--line);background-repeat:no-repeat;background-position:center;background-size:contain;background-origin:content-box;padding:6px 8px}
+/* путь фильма в карточке-герое */
+.psum{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-top:14px}
+.ps-row{display:grid;grid-template-columns:30px minmax(0,1fr);gap:8px;align-items:start;background:var(--bg);border:1px solid var(--line);border-left:4px solid var(--ec);border-radius:6px;padding:8px}
+.ps-row.cur{background:var(--gold-soft);border-color:var(--gold);border-left-color:var(--ec)}
+.ps-row .trophy{width:30px;height:40px;border-radius:5px;padding:2px;border:1px solid var(--line)}
+.ps-row b{font:600 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:color-mix(in srgb,var(--ec),var(--fg) 28%)}
+.ps-row ul{list-style:none;margin:3px 0 0;padding:0;display:flex;flex-direction:column;gap:2px}
+.ps-row li{font-size:12.5px;line-height:1.3;color:var(--muted)}
+.ps-row li.w{color:var(--fg);font-weight:600}
+.ps-row li.w::before{content:"★ ";color:var(--gold)}
+/* путь под постером на страницах событий и в таблицах */
+.award .path,.film .path,.tcard .path,.cat-in .path{margin-top:2px}
+.cat-in .win .pw{display:flex;flex-direction:column;gap:5px}
+/* шапка таблиц: одна крупная статуэтка */
+.phin{flex-direction:column;align-items:center;gap:8px}
+.phin .trophy{width:101px;height:134px;border-radius:10px;border:2px solid var(--ec);padding:6px}
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <div>
+      <div class="season-sw"><h1>Киносезон <span id="season-title"></span></h1>
+        <div class="ss-nav" role="group" aria-label="Сезон"><button class="ss-arr" data-season-step="-1" aria-label="Предыдущий сезон">‹</button><span id="season-chips"></span><button class="ss-arr" data-season-step="1" aria-label="Следующий сезон">›</button></div></div>
+      <p class="lede">Каталог фильмов сезона через их путь по фестивалям и премиям: где фильм впервые показали, что он там получил и докуда дошёл — от Сандэнса и Канн до «Оскара».</p>
+      <p class="lede lede2" id="season-lede"></p>
+    </div>
+    <div class="seg" role="group" aria-label="Режим">
+      <button id="m-events" data-mode="events" aria-pressed="true">События</button>
+      <button id="m-films" data-mode="films" aria-pressed="false">Фильмы сезона</button>
+      <button id="m-table" data-mode="table" aria-pressed="false">Таблицы</button>
+    </div>
+  </div>
+
+  <section class="wheel-box" aria-label="Календарь сезона">
+    <div class="wheel-bar">
+      <span class="hint" id="wheel-hint"></span>
+      <div class="seg" role="group" aria-label="Вид календаря">
+        <button id="w-ring" data-wmode="ring" aria-pressed="true">Кольцо года</button>
+        <button id="w-line" data-wmode="line" aria-pressed="false">Линия</button>
+      </div>
+    </div>
+    <div class="wheel-main">
+      <div class="wheel-scroll" id="wheel-scroll"><div class="wheel ring" id="wheel"></div></div>
+      <aside class="showcase" id="showcase" aria-live="polite"></aside>
+    </div>
+  </section>
+
+  <main id="app"></main>
+  <div>
+    <p class="status" id="pstatus"></p>
+    <details class="missing" id="missing" hidden><summary></summary><ul></ul></details>
+    <p class="status" id="tmdb-credit" hidden>Постеры фильмов: <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a>. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+  </div>
+
+  <footer>
+    <div><h4>Как читать</h4><p>Спираль — время сезона: от января года фестивалей в центре до марта года премий снаружи. Значок события можно оттянуть — пунктир покажет, где оно на ленте.</p>
+      <p>Кубики под постером — десять событий по порядку: слева пять фестивалей, справа пять премий. Серый — фильма там не было, цветной — участие или номинация, с белой точкой — приз или победа.</p></div>
+    <div><h4>Откуда данные</h4><p>Фестивали — страницы наград Кинопоиска, составы конкурсов и программ сверены с английской Википедией. Торонто — новость Кинопоиска и Википедия.</p>
+      <p>Премии — Кинопоиск и Википедия, все категории для кино. Critics’ Choice — полный список победителей в Boston Globe.</p></div>
+    <div><h4>Названия и картинки</h4><p>Русские названия — как на Кинопоиске; если русского нет, оставлено оригинальное.</p>
+      <p>Постеры фильмов — Кинопоиск, Википедия и Викиданные, при выкладке на GitHub ещё TMDB. Постеры событий и фото статуэток встроены в страницу. Ссылки в карточке фильма — Кинопоиск, Letterboxd, IMDb.</p></div>
+  </footer>
+</div>
+
+<dialog id="dlg" aria-label="Карточка фильма"><div style="position:relative" id="dlg-body"></div></dialog>
+
+<script>const SEASONS=[];</script>
+<script src="data/2024-25.js"></script>
+<script src="data/2025-26.js"></script>
+<script src="data/2026-27.js"></script>
+<script>
+/* ===================== ФИЛЬМЫ =====================
+   id Кинопоиска → [русское, оригинальное, международное или "", режиссёр] */
+/* данные сезонов лежат в data/*.js: каждый файл добавляет свой сезон в SEASONS */
+const FILMS={}, WIKI_T={};
+SEASONS.sort((a,b)=>a.y0-b.y0).forEach(x=>{ Object.assign(FILMS,x.films); Object.assign(WIKI_T,x.wikiT||{}); });
+const DEFAULT_SEASON="2025-26";
+
+/* ===================== СОБЫТИЯ ===================== */
+let S=null, EVENTS=[], EV={}, PATH={}, FT=[];
+
+
+/* ===================== ПУТЬ ФИЛЬМА =====================
+   уровень: 1 — участие/номинация, 2 — приз, 3 — главный приз или победа в премии */
+function note(fid, ev, lvl, text){ (PATH[fid] ||= []).push({ev, lvl, text}); }
+/* выбрать сезон: события, путь фильмов, таблица фестивалей и шкала времени спирали */
+function useSeason(id){
+  S=SEASONS.find(x=>x.id===id)||SEASONS.find(x=>x.id===DEFAULT_SEASON)||SEASONS[SEASONS.length-1];
+  EVENTS=S.events.map(e=>Object.assign({},e,S.meta[e.id]));
+  EV=Object.fromEntries(EVENTS.map((e,i)=>[e.id,{...e,i}]));
+  FT=S.ft||[]; PATH={};
+  buildPath(); setTimeBase(S.y0); applyPalette();
+}
+/* Палитра событий по сезонам: цвета взяты с постеров того года. Сезон без своей палитры берёт базовую (2025/26). */
+const PALETTES={
+  "2025-26":{
+    light:{sundance:"#ED6F2D",berlin:"#EC6270",cannes:"#806BBD",venice:"#6597CE",toronto:"#F2E150",critics:"#0B2270",globes:"#393835",bafta:"#411D7B",actors:"#193F3F",oscar:"#7E5224"},
+    dark: {sundance:"#F2894F",berlin:"#F07C90",cannes:"#9C8BD8",venice:"#86B3E6",toronto:"#F2E150",critics:"#6A7FE6",globes:"#B8B2A6",bafta:"#C07CEB",actors:"#4E9A8A",oscar:"#C9955A"}},
+  "2024-25":{
+    light:{sundance:"#3FCACD",berlin:"#E5365A",cannes:"#2F5E8C",venice:"#A8202A",toronto:"#F2C440",critics:"#7A7262",globes:"#A8873F",bafta:"#C25E28",actors:"#123150",oscar:"#17140F"},
+    dark: {sundance:"#7FE3E5",berlin:"#F06C86",cannes:"#7FA8D4",venice:"#E0585C",toronto:"#F6D46A",critics:"#B9B09D",globes:"#D2B06A",bafta:"#E58A55",actors:"#6E95C2",oscar:"#D8C9A2"}},
+  "2026-27":{
+    light:{sundance:"#9BD43A",berlin:"#E0399E",cannes:"#D4A853",venice:"#2F46C8",toronto:"#EE2A35",critics:"#1C1B19",globes:"#7E4526",bafta:"#4A3826",actors:"#4F6B5D",oscar:"#9C7E35"},
+    dark: {sundance:"#B8E866",berlin:"#F27CC0",cannes:"#E6C47E",venice:"#8293F2",toronto:"#F66A6F",critics:"#9E9A92",globes:"#C27F52",bafta:"#9C7B57",actors:"#7FA392",oscar:"#C9A85A"}}
+};
+const palOf=id=>PALETTES[id]||PALETTES["2025-26"];
+function applyPalette(){
+  const decl=o=>Object.entries(o).map(([k,v])=>`--e-${k}:${v}`).join(";");
+  const dk=(sel,o)=>`@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) ${sel}{${decl(o)}}} :root[data-theme="dark"] ${sel}{${decl(o)}}`;
+  const cur=palOf(S.id);
+  let css=`:root{${decl(cur.light)}} @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){${decl(cur.dark)}}} :root[data-theme="dark"]{${decl(cur.dark)}}`;
+  SEASONS.forEach(x=>{ const p=palOf(x.id); css+=` .pal-${x.id}{${decl(p.light)}} `+dk(`.pal-${x.id}`,p.dark); });
+  let st=document.getElementById("season-pal");
+  if(!st){ st=document.createElement("style"); st.id="season-pal"; document.head.appendChild(st); }
+  st.textContent=css;
+}
+function buildPath(){
+for (const e of EVENTS){
+  if(e.kind==="fest"){
+    note(e.top[2], e.id, 3, e.top[0]);
+    e.jury.forEach(a=>note(a[2], e.id, 2, a[0]+(a[3]?" — "+a[3]:"")));
+    e.comp.forEach(f=>{ if(f!==e.top[2] && !e.jury.some(a=>a[2]===f)) note(f, e.id, 1, e.compLabel||"Основной конкурс"); });
+    e.progs.forEach(p=>p[1].forEach(a=>note(a[2], e.id, 2, p[0]+": "+a[0].toLowerCase()+(a[3]?" — "+a[3]:""))));
+    (e.extra||[]).forEach(([t,ids])=>ids.forEach(f=>{ if(!(PATH[f]||[]).some(x=>x.ev===e.id)) note(f, e.id, 1, t); }));
+  } else {
+    (e.cats||[]).forEach(([cat, list],ci)=>list.forEach(([f,who,win])=>note(f, e.id, win?(ci<(e.id==="globes"?2:1)?3:2):1, (win?"Победа: ":"Номинация: ")+cat+(who?" — "+who:""))));
+  }
+}
+}
+function film(id){ const r=FILMS[id]; if(!r) return null; return {id, ru:r[0], orig:r[1], en:r[2], dir:r[3], kp:/^\d+$/.test(id)?id:null}; }
+function evLevel(fid, eid){ return Math.max(0,...(PATH[fid]||[]).filter(p=>p.ev===eid).map(p=>p.lvl)); }
+function firstEvent(fid){ const p=(PATH[fid]||[]).map(x=>EV[x.ev].i).sort((a,b)=>a-b)[0]; return EVENTS[p??0]; }
+
+/* ===================== СТАТУЭТКИ И ЛОГОТИПЫ (встроены в страницу) ===================== */
+function trophyHTML(eid, cls=""){ const e=EV[eid]; return `<span class="trophy tr-${eid} ${cls}" style="--ec:var(${e.c})" role="img" aria-label="${esc(e.trophy)}" title="${esc(e.trophy)}"></span>`; }
+function logoHTML(eid, h=34){ const e=EV[eid]; return `<span class="logo lg-${eid}" style="--lh:${h}px" role="img" aria-label="${esc(e.name)}"></span>`; }
+
+/* ===================== ПОСТЕРЫ-ЗАГЛУШКИ ===================== */
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function hash(s){let h=7;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return h}
+function art(f, e){
+  const h=hash(f.id+f.ru), base=`var(${e.c})`;
+  const x=10+(h>>3)%80, y=15+(h>>7)%50, r=26+(h>>11)%34, a=(h>>5)%180, kind=h%3;
+  const shade=`rgba(0,0,0,${.45+(h%5)*.06})`;
+  const shape = kind===0 ? `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,.18) 0 ${r}%, transparent ${r+.5}%)`
+    : kind===1 ? `repeating-linear-gradient(${a}deg, transparent 0 14px, rgba(255,255,255,.09) 14px 15px)`
+    : `linear-gradient(${a}deg, transparent 55%, rgba(255,255,255,.14) 55.5%)`;
+  return `${shape}, linear-gradient(170deg, transparent, ${shade}), ${base}`;
+}
+function poster(f, {mark="", lg=false, ev=null}={}){
+  const e=ev?EV[ev]:firstEvent(f.id), n=f.ru.length;
+  const ts=n<=8?20:n<=16?16:n<=26?14:12, tsl=n<=8?44:n<=16?34:n<=26?27:22;
+  return `<div class="poster${lg?" lg":""}" data-f="${f.id}" style="--art:${art(f,e)};--ts:${ts}px;--tsl:${tsl}px" aria-hidden="true">
+    ${mark?`<span class="mark">${esc(mark)}</span>`:""}<span class="pf">${esc(e.name)}</span><span class="pt">${esc(f.ru)}</span></div>`;
+}
+
+/* ===================== СПИРАЛЬ ГОДА / ЛИНИЯ =====================
+   Время — спираль из помесячных блоков: от января 2025 в центре к марту 2026 снаружи.
+   Зима сверху, лето снизу, весна слева, осень справа; движение против часовой стрелки.
+   Чем позже месяц, тем шире и насыщеннее блок. Кнопка «Линия» разматывает спираль в прямую. */
+const MONTHS="ЯФМАМИИАСОНД".split("");
+const SEASON_OF=["w","w","sp","sp","sp","su","su","su","a","a","a","w"];
+const SEASON={w:["Зима","--sp-winter"],sp:["Весна","--sp-spring"],su:["Лето","--sp-summer"],a:["Осень","--sp-autumn"]};
+const D=s=>new Date(s+"T12:00:00Z");
+const mid=e=>new Date((D(e.start).getTime()+D(e.end).getTime())/2);
+const fmtDay=d=>`${d.getUTCDate()} ${["янв","фев","мар","апр","мая","июн","июл","авг","сен","окт","ноя","дек"][d.getUTCMonth()]}`;
+const span=e=>e.start===e.end?fmtDay(D(e.start))+" "+D(e.start).getUTCFullYear():`${fmtDay(D(e.start))} – ${fmtDay(D(e.end))} ${D(e.end).getUTCFullYear()}`;
+let T0, T1, UMAX, Y0;                             // шкала сезона: январь года фестивалей → март года премий (≈449°)
+function setTimeBase(y){ Y0=y; T0=Date.UTC(y,0,1); T1=Date.UTC(y+1,3,1); UMAX=(T1-T0)/864e5/365*360; }
+function initialSeason(){
+  const h=decodeURIComponent(location.hash.slice(1)); if(SEASONS.some(x=>x.id===h)) return h;
+  try{ const st=JSON.parse(localStorage.getItem("season25")||"{}"); if(SEASONS.some(x=>x.id===st.season)) return st.season; }catch(e){}
+  return DEFAULT_SEASON;
+}
+useSeason(initialSeason());
+const uOf=d=>((d instanceof Date?d.getTime():d)-T0)/864e5/365*360;
+const scrA=u=>15-u;                              // середина зимы сверху, против часовой
+const mStart=k=>Date.UTC(Y0+Math.floor(k/12),k%12,1);
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const clamp01=t=>Math.max(0,Math.min(1,t));
+const lerp=(a,b,t)=>a+(b-a)*t;
+let wmode="ring";
+try{ const w=localStorage.getItem("season25-wmode"); if(w==="line"||w==="ring") wmode=w; }catch(e){}
+let wm = wmode==="line"?1:0, wanim=0, G=null;
+const reduceMotion = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+/* мягкие переходы: еле заметный сдвиг и проявление */
+const SOFT="cubic-bezier(.2,.7,.2,1)";
+function softIn(el, dx=0, dur=420, from=0){
+  if(!el || reduceMotion) return;
+  el.animate([{opacity:from, transform:`translateX(${dx}px)`},{opacity:1, transform:"none"}],{duration:dur, easing:SOFT});
+}
+const wheel=document.getElementById("wheel"), wscroll=document.getElementById("wheel-scroll");
+
+/* переход между сезонами прямо на спирали: начало ленты — прошлый сезон, конец — следующий */
+let GHOST=0;
+function hookSeasonHot(){
+  wheel.querySelectorAll(".season-hot").forEach(b=>{ const d=+b.dataset.hot;
+    b.addEventListener("mouseenter",()=>{ GHOST=d; drawFrame(spiralM(wm)); });
+    b.addEventListener("focus",()=>{ GHOST=d; drawFrame(spiralM(wm)); });
+    b.addEventListener("mouseleave",()=>{ GHOST=0; drawFrame(spiralM(wm)); });
+    b.addEventListener("blur",()=>{ GHOST=0; drawFrame(spiralM(wm)); });
+    b.addEventListener("click",e=>{ e.stopPropagation(); seasonJump(d); });
+  });
+}
+let jumping=false;
+function seasonJump(dir){
+  const k=SEASONS.indexOf(S)+dir; if(!SEASONS[k] || jumping) return;
+  jumping=true; const ring=wm<0.5, D0=reduceMotion?0:1;
+  wscroll.classList.add("jumping");
+  wheel.style.transformOrigin=ring?`${G.cx}px ${G.cy}px`:"50% 50%";
+  const out = ring ? [{transform:"scale(1)",opacity:1},{transform:`scale(${dir>0?0.5:1.7}) rotate(${dir>0?-40:40}deg)`,opacity:0}]
+                   : [{transform:"translateX(0)",opacity:1},{transform:`translateX(${dir>0?-45:45}%)`,opacity:0}];
+  const a=wheel.animate(out,{duration:420*D0,easing:"cubic-bezier(.55,0,.8,.2)"});
+  a.onfinish=()=>{
+    GHOST=0; switchSeason(SEASONS[k].id);
+    seasonEls().filter(el=>el!==wscroll).forEach((el,i)=>softIn(el, 14*dir, 520+i*45));
+    wheel.style.transformOrigin=ring?`${G.cx}px ${G.cy}px`:"50% 50%";
+    const inn = ring ? [{transform:`scale(${dir>0?1.7:0.5}) rotate(${dir>0?40:-40}deg)`,opacity:0},{transform:"scale(1)",opacity:1}]
+                     : [{transform:`translateX(${dir>0?45:-45}%)`,opacity:0},{transform:"translateX(0)",opacity:1}];
+    const b=wheel.animate(inn,{duration:560*D0,easing:"cubic-bezier(.2,.75,.25,1)"});
+    b.onfinish=()=>{ wscroll.classList.remove("jumping"); jumping=false; };
+  };
+}
+function buildWheel(){
+  wheel.innerHTML = `<svg class="decor" id="wsvg" aria-hidden="true"><g id="wx-ring"></g><g id="wx-line"></g><g id="wspiral"></g></svg>
+    <div class="wcenter" id="wcenter"></div>
+    <button class="season-hot" data-hot="-1" aria-label="Предыдущий сезон"></button><button class="season-hot" data-hot="1" aria-label="Следующий сезон"></button>` +
+    EVENTS.map(e=>`<button class="wnode k-${e.kind}${e.upcoming?" soon":""}" data-ev="${e.id}" style="--ec:var(${e.c})" aria-label="${esc(e.full)}, ${span(e)}">
+      ${trophyHTML(e.id)}<span class="wlabel">${esc(e.name)}<small>${esc(e.start===e.end?fmtDay(D(e.start)):fmtDay(D(e.start))+"–"+fmtDay(D(e.end)))}</small></span></button>`).join("");
+  hookSeasonHot();
+  wheel.querySelectorAll(".wnode").forEach((n,i)=>{
+    enableDrag(n,i);
+    n.addEventListener("mouseenter",()=>setCenter(n.dataset.ev));
+    n.addEventListener("focus",()=>setCenter(n.dataset.ev));
+    n.addEventListener("mouseleave",()=>setCenter());
+    n.addEventListener("blur",()=>setCenter());
+  });
+}
+let scLast="oscar";
+function setShowcase(eid){
+  const box=document.getElementById("showcase"); if(!box) return;
+  const main=document.querySelector(".wheel-main");
+  if(mode==="events" && view!=="overview"){
+    if(!box.classList.contains("on-"+S.id+"-"+view)){
+      const oldBn=box.querySelector(".st-banner .bn"), oldImg=oldBn&&oldBn.style.backgroundImage, prevI=box.dataset.evi;
+      box.className="showcase has-st on-"+S.id+"-"+view; box.innerHTML=stageHTML(EV[view]); box.dataset.evi=EV[view].i;
+      if(oldImg && !reduceMotion){                    // старый постер тает поверх нового, карточка чуть доезжает
+        const nb=box.querySelector(".st-banner"), gh=document.createElement("span");
+        gh.className="bn bn-old"; gh.style.backgroundImage=oldImg; nb.appendChild(gh);
+        gh.animate([{opacity:1},{opacity:0}],{duration:560, easing:"ease", fill:"forwards"}).onfinish=()=>gh.remove();
+        const dir=Math.sign(EV[view].i-(+prevI))||1;
+        box.querySelectorAll(".st-info > *").forEach((el,k)=>softIn(el, 12*dir, 440+k*70));
+      }
+    }
+    return;
+  }
+  if(mode!=="events") return;
+  box.className="showcase";
+  const id = eid || scLast;
+  scLast=id; const e=EV[id];
+  box.style.setProperty("--ec",`var(${e.c})`);
+  const cur=box.querySelector(".sc-wrap");
+  if(cur){ cur.style.setProperty("--ec",`var(${e.c})`); const st=cur.querySelector(".sc-trophy");
+    if(!st.classList.contains("tr-"+id)){ st.className=`sc-trophy tr-${id}`; softIn(st, 0, 320, 0.35); } cur.querySelector(".sc-cap").textContent=e.full; return; }
+  box.innerHTML=`<div class="sc-wrap" style="--ec:var(${e.c})"><div class="sc-trophy tr-${id}" role="img" aria-label="${esc(e.trophy)}"></div><p class="sc-cap">${esc(e.full)}</p></div>`;
+}
+function setCenter(eid){ setShowcase(eid); }
+function setCenterOld(eid){
+  const c=document.getElementById("wcenter"); if(!c) return;
+  const id = null;
+  if(id){ const e=EV[id];
+    c.style.setProperty("--ec",`var(${e.c})`);
+    c.innerHTML=`${trophyHTML(id)}<b style="color:var(${e.c})">${esc(e.name)}</b><span>${esc(e.trophy)}</span><span>${esc(span(e))}</span>`;
+  } else {
+    c.style.removeProperty("--ec");
+    c.innerHTML=`<b>Сезон<br>${S.title}</b><span>${EVENTS.length} событий<br>${Object.keys(PATH).length} фильмов</span>`;
+  }
+}
+function spreadVar(items, sepAt){          // раздвигаем узлы вдоль спирали/линии, сохраняя порядок
+  items.sort((a,b)=>a.t-b.t); items.forEach(x=>x.p=x.t);
+  for(let k=0;k<150;k++){ let moved=false;
+    for(let i=1;i<items.length;i++){ const d=items[i].p-items[i-1].p, need=sepAt((items[i].p+items[i-1].p)/2);
+      if(d<need-0.01){ const s=(need-d)/2; items[i].p+=s; items[i-1].p-=s; moved=true; } }
+    if(!moved) break; }
+}
+function geom(){
+  const MW=wmainEl().clientWidth, side=MW>=940 && slotKind()!=="none";
+  if(side) wmainEl().classList.add("abs");
+  const W0=side?MW:wscroll.clientWidth; if(!W0) return null;
+  const Lw=side?(W0-18)/2:W0;
+  const S=Math.min(Lw,700), TOP=30;
+  const g={S, W:W0, Lw, side, kind:slotKind(), Wr:W0, Hr:S+TOP+8, Wl:Math.max(W0,760), Hl:250, cx:Lw/2, cy:S/2+TOP, ay:132, padX:46};
+  g.ns=Math.max(30,Math.min(46,Math.round(S*0.064)));
+  g.labelsOn = S>=540;
+  g.R0=0.165*S; g.R1=0.43*S;
+  g.rad=u=>g.R0+(g.R1-g.R0)*u/UMAX;
+  const k=S<520?0.72:1;
+  g.hw=u=>(2+(u/UMAX)*12.5)*k;                 // полуширина ленты: тонко в начале, широко в конце
+  g.ringPt=u=>{const a=scrA(u)*Math.PI/180, r=g.rad(u); return [g.cx+r*Math.sin(a), g.cy-r*Math.cos(a)];};
+  g.lineX=u=>g.padX+(u/UMAX)*(g.Wl-2*g.padX);
+  g.linePt=u=>[g.lineX(u), g.ay];
+  const its=EVENTS.map((e,i)=>({e,i,t:uOf(mid(e))}));
+  g.ring=its.map(x=>({...x})); g.line=its.map(x=>({...x,t:g.lineX(x.t)}));
+  spreadVar(g.ring, u=>Math.max(g.ns+10, g.labelsOn?80:0)/g.rad(u)*180/Math.PI);
+  spreadVar(g.line, ()=>g.ns+10);
+  g.ring.sort((a,b)=>a.i-b.i); g.line.sort((a,b)=>a.i-b.i);
+  return g;
+}
+// точка спирали в момент морфинга: начало разматывается первым
+function local(u,m){ return ease(clamp01(m*1.5-0.5*(u/UMAX))); }
+function P(u,m){ const l=local(u,m), a=G.ringPt(u), b=G.linePt(u); return [lerp(a[0],b[0],l), lerp(a[1],b[1],l)]; }
+function normalAt(u,m){ const a=P(Math.max(0,u-0.4),m), b=P(Math.min(UMAX,u+0.4),m); const dx=b[0]-a[0], dy=b[1]-a[1], L=Math.hypot(dx,dy)||1; return [-dy/L, dx/L, dx/L, dy/L]; }
+const f1=n=>n.toFixed(1);
+
+function extrasRing(){
+  const g=G, S=g.S, fs=S<520?8:10; let h="";
+  // названия сезонов — там, где свободно
+  [["w",28,0.31],["sp",-90,0.31],["su",-180,0.355],["a",90,0.27]].forEach(([k,a,r])=>{
+    const rr=r*S, x=g.cx+rr*Math.sin(a*Math.PI/180), y=g.cy-rr*Math.cos(a*Math.PI/180);
+    h+=`<text x="${f1(x)}" y="${f1(y)}" text-anchor="middle" dominant-baseline="central" font-family="IBM Plex Mono, monospace" font-size="${fs+1}" font-weight="600" letter-spacing="2.5" fill="color-mix(in srgb,var(${SEASON[k][1]}) 55%,var(--muted))">${SEASON[k][0].toUpperCase()}</text>`; });
+  // буквы месяцев снаружи ленты
+  if(S>=480) for(let k=0;k<15;k++){ const um=(uOf(mStart(k))+uOf(mStart(k+1)))/2, [x,y]=g.ringPt(um), r=g.rad(um), off=g.hw(um)+9;
+    const ux=(x-g.cx)/r, uy=(y-g.cy)/r;
+    h+=`<text x="${f1(x+ux*off)}" y="${f1(y+uy*off)}" text-anchor="middle" dominant-baseline="central" font-family="IBM Plex Mono, monospace" font-size="${fs}" fill="var(--muted)">${MONTHS[k%12]}</text>`; }
+  // метки лет
+  if(S<480) return h;
+  const [sx,sy]=g.ringPt(0); h+=`<text x="${f1(sx)}" y="${f1(sy+18)}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="${fs}" font-weight="600" fill="var(--fg)">${Y0}</text>`;
+  const u26=uOf(Date.UTC(Y0+1,0,1)), [yx,yy]=g.ringPt(u26), r26=g.rad(u26);
+  h+=`<text x="${f1(yx-(yx-g.cx)/r26*(g.hw(u26)+22))}" y="${f1(yy-(yy-g.cy)/r26*(g.hw(u26)+22))}" text-anchor="middle" dominant-baseline="central" font-family="IBM Plex Mono, monospace" font-size="${fs}" font-weight="600" fill="var(--fg)">${Y0+1}</text>`;
+  return h;
+}
+function extrasLine(){
+  const g=G; let h="", runStart=null, runKey=null;
+  for(let k=0;k<=15;k++){
+    const m=k%12, x1=g.lineX(uOf(mStart(k))), x2=g.lineX(uOf(mStart(k+1)));
+    if(k<15) h+=`<text x="${f1((x1+x2)/2)}" y="238" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)">${MONTHS[m]}</text>`;
+    const key=k<15?SEASON_OF[m]:null;
+    if(key!==runKey){ if(runKey) h+=`<text x="${f1((runStart+x1)/2)}" y="22" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="600" letter-spacing="2" fill="color-mix(in srgb,var(${SEASON[runKey][1]}) 55%,var(--muted))">${SEASON[runKey][0].toUpperCase()}</text>`; runStart=x1; runKey=key; }
+  }
+  const xy=g.lineX(uOf(Date.UTC(Y0+1,0,1)));
+  h+=`<line x1="${f1(xy)}" y1="32" x2="${f1(xy)}" y2="224" stroke="var(--muted)" stroke-dasharray="3 4"/>
+      <text x="${f1(xy-8)}" y="44" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)" letter-spacing="1">${Y0} · ФЕСТИВАЛИ</text>
+      <text x="${f1(xy+8)}" y="44" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)" letter-spacing="1">${Y0+1} · ПРЕМИИ</text>`;
+  return h;
+}
+function drawFrame(m){
+  if(!G) return;
+  const g=G, em=ease(m), W=lerp(g.Wr,g.Wl,em), H=lerp(g.Hr,g.Hl,em);
+  wheel.style.width=W+"px"; wheel.style.height=H+"px"; wheel.style.setProperty("--ns",g.ns+"px");
+  wheel.classList.toggle("ring",m<0.5); wheel.classList.toggle("line",m>=0.5);
+  const svg=document.getElementById("wsvg"); svg.setAttribute("width",W); svg.setAttribute("height",Math.max(H,g.Hl)); svg.setAttribute("viewBox",`0 0 ${W} ${Math.max(H,g.Hl)}`);
+  document.getElementById("wx-ring").style.opacity=Math.max(0,1-2.2*m);
+  document.getElementById("wx-line").style.opacity=Math.max(0,2.2*m-1.2);
+  // лента из помесячных блоков
+  let s="";
+  for(let k=0;k<15;k++){
+    const u0=uOf(mStart(k)), u1=Math.min(UMAX,uOf(mStart(k+1))), n=12, out=[], inn=[];
+    for(let j=0;j<=n;j++){ const u=u0+(u1-u0)*j/n, [x,y]=P(u,m), [nx,ny]=normalAt(u,m), w=g.hw(u);
+      out.push(f1(x+nx*w)+","+f1(y+ny*w)); inn.push(f1(x-nx*w)+","+f1(y-ny*w)); }
+    const op=(0.2+0.55*((u0+u1)/2/UMAX)).toFixed(2);
+    s+=`<polygon points="${out.join(" ")} ${inn.reverse().join(" ")}" fill="color-mix(in srgb,var(${SEASON[SEASON_OF[k%12]][1]}) 50%,var(--spiral))" fill-opacity="${op}" stroke="var(--surface)" stroke-width="1.4" stroke-linejoin="round"/>`;
+  }
+  // стрелка на конце
+  { const u=UMAX, [x,y]=P(u,m), [nx,ny,tx,ty]=normalAt(u-0.4,m), w=g.hw(u)+6;
+    s+=`<polygon points="${f1(x+tx*16)},${f1(y+ty*16)} ${f1(x+nx*w)},${f1(y+ny*w)} ${f1(x-nx*w)},${f1(y-ny*w)}" fill="color-mix(in srgb,var(--sp-spring) 50%,var(--spiral))" fill-opacity="0.8"/>`; }
+  // начало спирали
+  { const [x,y]=P(0,m); s+=`<circle cx="${f1(x)}" cy="${f1(y)}" r="3.5" fill="color-mix(in srgb,var(--sp-winter) 50%,var(--spiral))" fill-opacity="0.6"/>`; }
+  // дни фестивалей, точки настоящих дат и выноски к раздвинутым значкам
+  EVENTS.forEach((e,i)=>{
+    if(e.start!==e.end){ const ua=uOf(D(e.start)), ub=uOf(D(e.end)), pts=[]; for(let j=0;j<=8;j++){ const [x,y]=P(ua+(ub-ua)*j/8,m); pts.push(f1(x)+","+f1(y)); }
+      s+=`<polyline points="${pts.join(" ")}" fill="none" stroke="var(${e.c})" stroke-width="4" stroke-linecap="round"/>`; }
+    const ut=uOf(mid(e)), [tx,ty]=P(ut,m), [nxp,nyp]=nodePos(i,m);
+    s+=`<circle cx="${f1(tx)}" cy="${f1(ty)}" r="3" fill="var(${e.c})"/>`;
+    if(Math.hypot(nxp-tx,nyp-ty)>g.ns/2+2) s+=`<line x1="${f1(tx)}" y1="${f1(ty)}" x2="${f1(nxp)}" y2="${f1(nyp)}" stroke="var(${e.c})" stroke-width="1.2" stroke-dasharray="2 2"/>`;
+  });
+  // соседние сезоны: полупрозрачный хвост ленты и подпись при наведении
+  { const k=SEASONS.indexOf(S), em2=ease(m), ringish=em2<0.5;
+    const hotPos=d=>{ if(!ringish) return d<0 ? [g.lineX(0)-24, g.ay] : [g.lineX(UMAX)+30, g.ay];
+      if(d<0){ const [x,y]=P(0,m), t=normalAt(0.4,m); return [x-t[2]*16, y-t[3]*16]; }      // сразу за точкой начала
+      const [x,y]=P(UMAX,m), t=normalAt(UMAX-0.4,m); return [x+t[2]*30, y+t[3]*30]; };    // сразу за остриём стрелки
+    wheel.querySelectorAll(".season-hot").forEach(b=>{ const d=+b.dataset.hot, has=!!SEASONS[k+d];
+      b.hidden=!has; if(!has) return; const [x,y]=hotPos(d); b.style.left=x.toFixed(1)+"px"; b.style.top=y.toFixed(1)+"px";
+      b.title=(d<0?"← ":"")+"Сезон "+SEASONS[k+d].title+(d>0?" →":""); });
+    if(GHOST && SEASONS[k+GHOST]){ const T=SEASONS[k+GHOST].title, pts=[];
+      if(ringish){ const [u0,u1]=GHOST<0?[-80,-3]:[UMAX+4,UMAX+90]; for(let j=0;j<=24;j++){ const [x,y]=g.ringPt(u0+(u1-u0)*j/24); pts.push(f1(x)+","+f1(y)); } }
+      else { const y=g.ay, [x0,x1]=GHOST<0?[6,g.lineX(0)-10]:[g.lineX(UMAX)+20,W-6]; pts.push(f1(x0)+","+f1(y), f1(x1)+","+f1(y)); }
+      s+=`<polyline class="ghost" points="${pts.join(" ")}" fill="none" stroke="var(--spiral)" stroke-width="${ringish?(GHOST<0?5:22):14}" stroke-linecap="round" stroke-dasharray="${ringish?"10 6":"8 5"}" opacity=".35"/>`;
+      const [lx,ly]=hotPos(GHOST), dy=ringish?(GHOST<0?-30:-34):-34;
+      s+=`<text x="${f1(lx)}" y="${f1(ly+dy)}" text-anchor="${ringish?"middle":(GHOST<0?"start":"end")}" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="600" fill="var(--fg)" opacity=".8">${GHOST<0?"← ":""}${T}${GHOST>0?" →":""}</text>`;
+    } }
+  document.getElementById("wspiral").innerHTML=s;
+  // значки событий и подписи
+  wheel.querySelectorAll(".wnode").forEach((n,i)=>{
+    const [x,y]=nodePos(i,m); n.style.left=x+"px"; n.style.top=y+"px";
+    const lab=n.querySelector(".wlabel"), lw=lab.offsetWidth||70, lh=lab.offsetHeight||26, l=local(g.ring[i].t,m);
+    const rp=g.ringPt(g.ring[i].p), r=Math.hypot(rp[0]-g.cx,rp[1]-g.cy)||1, ux=(rp[0]-g.cx)/r, uy=(rp[1]-g.cy)/r;
+    const dr=g.ns/2+7+(Math.abs(ux)*lw+Math.abs(uy)*lh)/2;
+    const dl=g.ns/2+7+lh/2, sl=i%2?1:-1;
+    let lx=lerp(ux*dr,0,l), ly=lerp(uy*dr,sl*dl,l);
+    const ax=x+lx; if(ax-lw/2<2) lx+=2-(ax-lw/2); if(ax+lw/2>W-2) lx-=(ax+lw/2)-(W-2);
+    lab.style.setProperty("--lx",lx.toFixed(1)+"px"); lab.style.setProperty("--ly",ly.toFixed(1)+"px");
+  });
+  const ctr=document.getElementById("wcenter");
+  ctr.style.left=g.cx+"px"; ctr.style.top=g.cy+"px"; ctr.style.opacity=g.S>=480?Math.max(0,1-2.5*m):0;
+  ctr.style.setProperty("--cw",Math.round(g.R0*1.7)+"px"); ctr.style.setProperty("--ct",Math.round(Math.max(34,g.S*0.085))+"px");
+}
+/* ---- правая часть (сцена события / статуэтка) едет вместе со спиралью ---- */
+const wmainEl=()=>document.querySelector(".wheel-main");
+function slotKind(){ return mode!=="events" ? "none" : (view==="overview" ? "trophy" : "stage"); }
+function targetM(){ return (mode!=="events" || wmode==="line") ? 1 : 0; }
+const R=(a,b,t)=>({x:lerp(a.x,b.x,t), y:lerp(a.y,b.y,t), w:lerp(a.w,b.w,t)});
+const place=(el,r)=>{ el.style.left=r.x.toFixed(1)+"px"; el.style.top=r.y.toFixed(1)+"px"; el.style.width=r.w.toFixed(1)+"px"; };
+function sideMeasure(){
+  const g=G, main=wmainEl(), box=document.getElementById("showcase");
+  main.classList.toggle("abs", g.side);
+  [wscroll, box, ...box.querySelectorAll(".st-banner,.st-info,.sc-wrap")].forEach(el=>{ if(!g.side){ el.style.left=el.style.top=el.style.width=""; el.style.opacity=""; el.style.visibility=""; } });
+  if(!g.side){ main.style.height=""; wscroll.style.top=""; g.L=null; return; }
+  const W=g.W, rx=g.Lw+18, rw=W-rx;
+  if(g.kind==="stage"){
+    const b=box.querySelector(".st-banner"), inf=box.querySelector(".st-info");
+    // кольцо: постер и карточка справа столбиком; линия: постер остаётся в правой колонке (только опускается), карточка — слева
+    const liw=rx-18;
+    inf.style.width=rw+"px"; inf.style.setProperty("--ov","-62px"); const rih=inf.offsetHeight;
+    inf.style.width=liw+"px"; inf.style.setProperty("--ov","0px"); const lih=inf.offsetHeight;
+    const rbh=rw*9/16, rSH=rbh+12+rih, ringH=Math.max(g.Hr,rSH), blk=Math.max(rbh,lih), y0=g.Hl+22;
+    const ry=(ringH-rSH)/2;
+    g.L={ringH, lineH:y0+blk+4, wr:(ringH-g.Hr)/2, rih, lih,
+      rb:{x:rx,y:ry,w:rw}, ri:{x:rx,y:ry+rbh+12,w:rw},
+      lb:{x:rx,y:y0+(blk-rbh)/2,w:rw}, li:{x:0,y:y0+(blk-lih)/2,w:liw}};
+  } else if(g.kind==="trophy"){
+    const t=box.querySelector(".sc-wrap"); if(!t){ g.L=null; return; }
+    t.style.width=rw+"px"; const h=t.offsetHeight, ringH=Math.max(g.Hr,h);
+    g.L={ringH, lineH:g.Hl, wr:(ringH-g.Hr)/2, rt:{x:rx,y:(ringH-h)/2,w:rw}, lt:{x:rx,y:g.Hl+20,w:rw}};
+  }
+}
+/* общая шкала перехода t: 0 — кольцо, 1 — линия.
+   Со сценой события всё движется одновременно: спираль разматывается, карточка события дугой переезжает
+   на место кольца (влево), постер опускается в правой колонке. Ничего не исчезает; обратно — в обратном порядке */
+const staged=()=>G && G.side && G.kind==="stage" && G.L;
+const spiralM=t=>staged() ? clamp01((t-0.04)/0.84) : t;
+function frame(t){ drawFrame(spiralM(t)); positionSide(t); }
+function positionSide(t){
+  const g=G; if(!g || !g.side || !g.L) return;
+  const L=g.L, main=wmainEl(), box=document.getElementById("showcase"), em=ease(spiralM(t));
+  const wheelTop=lerp(L.wr,0,em), wheelBottom=wheelTop+lerp(g.Hr,g.Hl,em);
+  wscroll.style.top=wheelTop.toFixed(1)+"px";
+  let bottom=wheelBottom;
+  if(g.kind==="stage"){
+    const b=box.querySelector(".st-banner"), inf=box.querySelector(".st-info"); if(!b||!inf) return;
+    // карточка едет дугой (чуть вниз и влево — под уходящим кольцом — и вверх на место), постер опускается чуть позже
+    const s=ease(clamp01((t-0.05)/0.6)), a=ease(clamp01((t-0.22)/0.42));
+    const P0=L.ri, P1=L.li, C={x:(P0.x+P1.x)/2+80, y:Math.max(P0.y,P1.y)+120};
+    const q0=(1-s)*(1-s), q1=2*s*(1-s), q2=s*s;
+    const ri={x:q0*P0.x+q1*C.x+q2*P1.x, y:q0*P0.y+q1*C.y+q2*P1.y, w:lerp(P0.w,P1.w,s)};
+    const rb=R(L.rb,L.lb,a);
+    place(b,rb); place(inf,ri); inf.style.setProperty("--ov",lerp(-62,0,s).toFixed(1)+"px");
+    inf.style.opacity=""; inf.style.visibility="";
+    bottom=Math.max(bottom, rb.y+rb.w*9/16, ri.y+lerp(L.rih,L.lih,s));
+    if(t<=0) bottom=L.ringH; if(t>=1) bottom=L.lineH;
+  } else if(g.kind==="trophy"){
+    const tw=box.querySelector(".sc-wrap"); if(!tw) return;
+    place(tw,L.rt); const o=clamp01(1-t*2.2); tw.style.opacity=o.toFixed(2); tw.style.visibility=o<0.02?"hidden":"";
+    bottom=lerp(L.ringH,L.lineH,em);
+  }
+  main.style.height=Math.max(bottom,wheelBottom).toFixed(1)+"px";
+}
+function nodePos(i,m){
+  const g=G, l=local(g.ring[i].t,m), a=g.ringPt(g.ring[i].p), b=[g.line[i].p, g.ay], o=OFF[i]||[0,0];
+  return [lerp(a[0],b[0],l)+o[0], lerp(a[1],b[1],l)+o[1]];
+}
+/* значки можно оттащить мышью или пальцем: видно, где событие на самом деле лежит на ленте (пунктир ведёт к точке) */
+let OFF=[];
+const OFF_MAX=140;
+function enableDrag(n,i){
+  let st=null;
+  n.addEventListener("pointerdown",e=>{ if(e.button>0) return; cancelAnimationFrame(springs[i]); st={x:e.clientX,y:e.clientY,o:(OFF[i]||[0,0]).slice(),drag:false}; n.setPointerCapture(e.pointerId); });
+  n.addEventListener("pointermove",e=>{ if(!st) return; let dx=e.clientX-st.x, dy=e.clientY-st.y;
+    if(!st.drag && Math.hypot(dx,dy)<5) return; st.drag=true; n.classList.add("dragging");
+    let ox=st.o[0]+dx, oy=st.o[1]+dy; const L=Math.hypot(ox,oy); if(L>OFF_MAX){ ox*=OFF_MAX/L; oy*=OFF_MAX/L; }
+    OFF[i]=[ox,oy]; drawFrame(spiralM(wm)); });
+  const end=e=>{ if(!st) return; if(st.drag){ n._dragged=true; n.classList.remove("dragging"); springBack(i); } st=null; };
+  n.addEventListener("pointerup",end); n.addEventListener("pointercancel",end);
+  n.addEventListener("click",e=>{ if(n._dragged){ n._dragged=false; e.stopPropagation(); e.preventDefault(); } });
+}
+const springs={};
+function springBack(i){
+  cancelAnimationFrame(springs[i]); const o=(OFF[i]||[0,0]).slice(), t0=performance.now(), dur=reduceMotion?0:520;
+  const back=k=>{ const c=1.6; return 1-Math.pow(1-k,3)*(1+c*k); };   // мягкий возврат на место
+  const step=now=>{ const k=dur?Math.min(1,(now-t0)/dur):1, f=1-back(k);
+    OFF[i]=[o[0]*f, o[1]*f]; drawFrame(spiralM(wm)); if(k<1) springs[i]=requestAnimationFrame(step); else OFF[i]=[0,0]; };
+  springs[i]=requestAnimationFrame(step);
+}
+let lastSlot="", lastKind="", tweenOn=false;
+/* плавный уход правой части (переход в «Фильмы сезона» / «Таблицы») и её возвращение */
+function tween(dur, from, to, onEnd, onMid){
+  cancelAnimationFrame(wanim); wanimOn=true; wanimTo=to.m; tweenOn=true;
+  const main=wmainEl(), t0=performance.now(); let mid=false;
+  const step=now=>{ const k=dur?Math.min(1,(now-t0)/dur):1, e=ease(clamp01(k*1.35));
+    wm=lerp(from.m,to.m,k); drawFrame(wm);
+    main.style.height=lerp(from.h,to.h,e).toFixed(1)+"px"; wscroll.style.top=lerp(from.top,to.top,e).toFixed(1)+"px";
+    if(!mid && k>=0.55){ mid=true; onMid&&onMid(); }
+    if(k<1) wanim=requestAnimationFrame(step); else { wanimOn=false; tweenOn=false; onEnd&&onEnd(); } };
+  wanim=requestAnimationFrame(step);
+}
+function leaveTween(){
+  const main=wmainEl(), box=document.getElementById("showcase");
+  document.querySelector(".wheel-box").classList.add("forced");
+  box.classList.add("sc-hide");
+  const from={m:wm, h:main.offsetHeight, top:parseFloat(wscroll.style.top)||0};
+  tween(reduceMotion?0:(wm<1?1300:650), from, {m:1, h:G.Hl, top:0}, ()=>{ box.classList.remove("sc-hide"); box.innerHTML=""; box.className="showcase"; layoutWheel(); frame(1); });
+}
+function enterTween(){
+  const main=wmainEl(), box=document.getElementById("showcase"), h0=main.offsetHeight;
+  box.classList.add("sc-hide");
+  layoutWheel(); if(!G) return;
+  const tm=targetM();
+  if(!G.side || !G.L){ box.classList.remove("sc-hide"); if(Math.abs(wm-tm)>0.001) animateWheel(tm); return; }
+  positionSide(tm);                                    // правая часть сразу на своём конечном месте, но пока невидима
+  const to={m:tm, h:tm===0?G.L.ringH:G.L.lineH, top:tm===0?G.L.wr:0};
+  main.style.height=h0+"px"; drawFrame(wm);
+  tween(reduceMotion?0:(Math.abs(wm-tm)>0.001?1300:650), {m:wm, h:h0, top:0}, to, null, ()=>box.classList.remove("sc-hide"));
+}
+function layoutWheel(){
+  const main=wmainEl(), tm=targetM(), k=slotKind();
+  main.classList.toggle("line",tm===1); main.classList.toggle("has-stage",k==="stage"); main.classList.toggle("no-side",k==="none");
+  document.querySelector(".wheel-box").classList.toggle("forced",mode!=="events");
+  G=geom(); if(!G) return;
+  document.getElementById("wx-ring").innerHTML=extrasRing();
+  document.getElementById("wx-line").innerHTML=extrasLine();
+  sideMeasure();
+  frame(wm);
+  document.getElementById("w-ring").setAttribute("aria-pressed",String(wmode==="ring"));
+  document.getElementById("w-line").setAttribute("aria-pressed",String(wmode==="line"));
+  document.getElementById("wheel-hint").textContent = mode!=="events" ? `Сезон на одной линии: январь ${Y0} → март ${Y0+1}. Нажми на событие, чтобы открыть его`
+    : wmode==="ring"
+    ? `Спираль времени: январь ${Y0} в центре → март ${Y0+1} снаружи. Зима сверху, лето снизу. Значок можно оттянуть. Начало и конец ленты ведут в соседние сезоны`
+    : `Спираль, размотанная в линию: январь ${Y0} → март ${Y0+1}. Значок можно оттянуть. Начало и конец ленты ведут в соседние сезоны`;
+}
+let wanimOn=false, wanimTo=null;
+function animateWheel(target){
+  cancelAnimationFrame(wanim); wanimOn=true; wanimTo=target;
+  const from=wm, t0=performance.now(), dur=reduceMotion?0:(staged()?2100:1400)*Math.max(0.35,Math.abs(target-from));
+  const step=now=>{ const k=dur?Math.min(1,(now-t0)/dur):1; wm=from+(target-from)*k; frame(wm); if(k<1) wanim=requestAnimationFrame(step); else wanimOn=false; };
+  wanim=requestAnimationFrame(step);
+}
+function updateWheel(){
+  wheel.querySelectorAll(".wnode").forEach(n=>n.setAttribute("aria-current",String(mode==="events" && view===n.dataset.ev)));
+  setCenterOld(); setShowcase();
+  const slot=mode+"|"+(mode==="events"?view:""), kind=slotKind();
+  if(slot!==lastSlot){
+    const prev=lastKind; lastSlot=slot; lastKind=kind;
+    if(kind==="none" && prev && prev!=="none" && G && G.side){ leaveTween(); return; }
+    if(prev==="none" && kind!=="none"){ enterTween(); return; }
+    layoutWheel();
+  }
+  const tm=targetM(); if(tweenOn) return; if(Math.abs(wm-tm)>0.001 && !wanimOn) animateWheel(tm); else if(wanimOn && wanimTo!==tm) animateWheel(tm);
+}
+document.querySelectorAll("[data-wmode]").forEach(b=>b.addEventListener("click",()=>{
+  if(wmode===b.dataset.wmode) return;
+  wmode=b.dataset.wmode; try{localStorage.setItem("season25-wmode",wmode)}catch(e){}
+  OFF=[];
+  layoutWheel(); animateWheel(targetM());
+}));
+if(window.ResizeObserver){ let last=0; new ResizeObserver(()=>{ const w=wscroll.clientWidth; if(Math.abs(w-last)>4){ last=w; layoutWheel(); } }).observe(wscroll); }
+else window.addEventListener("resize",layoutWheel);
+
+/* ===================== ОБЗОР И СОБЫТИЯ ===================== */
+/* главный приз события; у премий, которые ещё не вручены, — null */
+const mainWin=e=> e.kind==="fest" ? (e.top?[e.top[0],e.top[2]]:null) : (e.cats&&e.cats.length ? [e.cats[0][0],e.cats[0][1].find(x=>x[2])?.[0]||e.cats[0][1][0][0]] : null);
+const soonText=e=>`Церемония — ${fmtDay(D(e.start))} ${D(e.start).getUTCFullYear()}${e.noms?`. Номинации объявят ${e.noms}`:""}`;
+function renderOverview(){
+  return `<section class="event">
+    <div class="row-label"><p class="label">Главные победители сезона</p><p class="label" style="text-transform:none;letter-spacing:0">${EVENTS.length} событий · ${Object.keys(PATH).length} фильмов</p></div>
+    <div class="tiles">${EVENTS.map(e=>{
+      const mw=mainWin(e), bn=`<span class="bn" style="background-image:url(img/${S.id}/${e.id}.webp)" role="img" aria-label="${esc(e.name)}"></span><span class="k">${esc(span(e))}</span>`;
+      if(!mw) return `<button class="tile soon" data-ev="${e.id}" style="--ec:var(${e.c})">${bn}<span class="soon-card">${trophyHTML(e.id)}<b>Впереди</b></span><span class="p">${esc(soonText(e))}</span><span class="w">${esc(e.name)}</span></button>`;
+      const [prize, fid] = mw, f=film(fid);
+      return `<button class="tile" data-ev="${e.id}" style="--ec:var(${e.c})">${bn}
+        ${poster(f,{ev:e.id})}<span class="p">${esc(prize)}</span><span class="w">${esc(f.ru)}</span></button>`;
+    }).join("")}</div></section>`;
+}
+const pathStrip=fid=>`<span class="path">${EVENTS.map(e=>{const l=evLevel(fid,e.id);return `<i class="${l?"l"+l:""}" style="--ec:var(${e.c})" title="${esc(e.name)}"></i>`}).join("")}</span>`;
+function awardCard(a, evId){
+  const f=film(a[2]);
+  return `<button class="award" data-open="${f.id}"><span class="what">${esc(a[0])}</span>${poster(f,{ev:evId})}${pathStrip(f.id)}
+    <span class="t">${esc(f.ru)}</span><span class="who">${esc(a[3]||f.dir)}</span></button>`;
+}
+function evNav(e){
+  const k=EVENTS.findIndex(x=>x.id===e.id), p=EVENTS[k-1], n=EVENTS[k+1];
+  return `<div class="ev-nav"><button data-ev="${p?.id||""}" ${p?"":"disabled"}>← ${esc(p?.name||"")}</button>
+    <button data-ev="${n?.id||""}" ${n?"":"disabled"}>${esc(n?.name||"")} →</button></div>`;
+}
+function stageHTML(e){
+  const mw=mainWin(e), f=mw&&film(mw[1]), prize=mw&&mw[0];
+  return `<div class="stage" style="--ec:var(${e.c})">
+    <div class="st-banner"><span class="bn" style="background-image:url(img/${S.id}/${e.id}.webp)" role="img" aria-label="Постер: ${esc(e.full)}"></span></div>
+    <div class="st-info">
+      <div class="st-head">${trophyHTML(e.id)}<div><h2>${esc(e.full)}</h2><span class="info">${esc(span(e))} · ${esc(e.info.replace(/^[^·]*·\s*/,""))}</span></div></div>
+      ${f?`<button class="st-win" data-open="${f.id}">${poster(f,{ev:e.id})}<span class="st-wt"><span class="pz">${esc(prize)}</span><b>${esc(f.ru)}</b>
+        <span class="orig">${esc(f.orig)}</span><span class="dir">${esc(f.dir)}</span></span></button>`:`<div class="st-soon"><b>Премия ещё впереди</b><span>${esc(soonText(e))}.</span><span>Номинанты и победители появятся здесь, а у фильмов сезона загорятся кубики премий.</span></div>`}
+      ${evNav(e)}
+    </div></div>`;
+}
+function evHead(e){
+  return `<div class="ev-banner"><span class="bn" style="background-image:url(img/${S.id}/${e.id}.webp)" role="img" aria-label="Постер: ${esc(e.full)}"></span></div><div class="ev-head has-bn">${trophyHTML(e.id)}<div><h2>${esc(e.full)}</h2><span class="info">${esc(span(e))} · ${esc(e.info.replace(/^[^·]*·\s*/,""))}</span></div>${evNav(e)}</div>`;
+}
+function pathSummary(fid, curEv){
+  const P=PATH[fid]||[], evs=[...new Set(P.map(p=>p.ev))].sort((a,b)=>EV[a].i-EV[b].i);
+  const clean=t=>t.replace(/^(Победа|Номинация): /,"");
+  return `<div class="psum">${evs.map(eid=>{ const e=EV[eid], ps=P.filter(p=>p.ev===eid).sort((a,b)=>b.lvl-a.lvl);
+    return `<div class="ps-row${eid===curEv?" cur":""}" style="--ec:var(${e.c})">${trophyHTML(eid)}<div><b>${esc(e.name)}</b><ul>${ps.map(p=>`<li class="${p.lvl>=2?"w":""}">${esc(clean(p.text))}</li>`).join("")}</ul></div></div>`; }).join("")}</div>`;
+}
+function otherPills(fid, exceptEv){
+  return (PATH[fid]||[]).filter(p=>p.ev!==exceptEv && p.lvl>=1).sort((a,b)=>EV[a.ev].i-EV[b.ev].i)
+    .map(p=>`<span class="pill${p.lvl<2?" out":""}">${esc(EV[p.ev].name)}: ${esc(p.text)}</span>`).join("");
+}
+const plural=(n,a,b,c)=>{const m10=n%10,m100=n%100;return n+" "+(m10===1&&m100!==11?a:m10>=2&&m10<=4&&(m100<12||m100>14)?b:c)};
+function renderFest(e){
+  const top=film(e.top[2]);
+  const juryOf = fid => e.jury.find(a=>a[2]===fid);
+  const mark = fid => fid===e.top[2] ? e.top[1] : (juryOf(fid)?.[1]||"");
+  return `<section class="event" style="--ec:var(${e.c})">
+    <p class="label">${esc(e.juryLabel||"Призы жюри основного конкурса")}</p>
+    <div class="shelf">${e.jury.map(a=>awardCard(a,e.id)).join("")}</div>
+    <p class="label">${esc(e.compLabel||"Основной конкурс")} · ${plural(e.comp.length,"фильм","фильма","фильмов")}</p>
+    <div class="grid">${e.comp.map(fid=>{const f=film(fid);return `<button class="film" data-open="${fid}">${poster(f,{mark:mark(fid),ev:e.id})}${pathStrip(fid)}
+      <span class="t">${esc(f.ru)}</span><span class="d">${esc(f.dir)}</span></button>`}).join("")}</div>
+    ${e.progs.length||e.extra?`<p class="label">Другие программы</p>`:""}
+    <div class="progs">${(e.extra||[]).map(([t,ids])=>`<details class="prog"><summary><b>${esc(t)}</b><span>${plural(ids.length,"фильм","фильма","фильмов")}</span></summary>
+      <div class="grid" style="padding:4px 14px 16px">${ids.map(fid=>{const f=film(fid);return `<button class="film" data-open="${fid}">${poster(f,{ev:e.id})}${pathStrip(fid)}<span class="t">${esc(f.ru)}</span><span class="d">${esc(f.dir)}</span></button>`}).join("")}</div></details>`).join("")}${e.progs.map(p=>`<details class="prog"><summary><b>${esc(p[0])}</b><span>${plural(p[1].length,"приз","приза","призов")}</span></summary>
+      <div class="shelf">${p[1].map(a=>awardCard(a,e.id)).join("")}</div></details>`).join("")}</div>
+    ${e.honor.length?`<p class="label">Почётные награды</p><ul class="honor">${e.honor.map(h=>`<li><span class="h">${esc(h[0])}</span><span>${esc(h[1])}</span></li>`).join("")}</ul>`:""}
+  </section>`;
+}
+function renderAward(e){
+  if(isSoon(e)) return `<section class="event" style="--ec:var(${e.c})">
+    <p class="tbl-note">${esc(soonText(e))}. Категории — как в прошлом году; номинанты и победители появятся здесь после объявления.</p>
+    ${templateCats(e.id).map(cat=>`<div class="cat"><h3>${esc(cat)}</h3><div class="cat-soon">
+      <div class="cs-card"><span>Номинанты</span><b>${esc(e.noms||"дата позже")}</b></div>
+      <div class="cs-card"><span>Победитель</span><b>${esc(dShort(e.start))}</b></div></div></div>`).join("")}
+  </section>`;
+  return `<section class="event" style="--ec:var(${e.c})">
+    ${e.cats.map(([cat,list])=>`<div class="cat"><h3>${esc(cat)}</h3><div class="cat-row"><div class="cat-in${list.length>=4?" many":""}">
+      ${list.map(([fid,who,win])=>{const f=film(fid);
+        return win ? `<button class="win" data-open="${fid}"><div class="pw">${poster(f,{ev:e.id})}${pathStrip(fid)}</div><div><span class="lab">Победитель</span><div class="t">${esc(f.ru)}</div><div class="who">${esc(who||f.dir)}</div></div></button>`
+                   : `<button class="nom" data-open="${fid}">${poster(f,{ev:e.id})}${pathStrip(fid)}<span class="t">${esc(f.ru)}</span><span class="who">${esc(who||f.dir)}</span></button>`}).join("")}
+    </div></div></div>`).join("")}
+    ${e.honor&&e.honor.length?`<p class="label">Почётные награды</p><ul class="honor">${e.honor.map(h=>`<li><span class="h">${esc(h[0])}</span><span>${esc(h[1])}</span></li>`).join("")}</ul>`:""}
+  </section>`;
+}
+
+/* ===================== ФИЛЬМЫ СЕЗОНА ===================== */
+const fstate={filter:"all", sort:"score", q:""};
+function score(fid){ return (PATH[fid]||[]).reduce((s,p)=>s+(p.lvl===3?5:p.lvl===2?3:1),0); }
+function renderFilms(){
+  const ids=Object.keys(PATH), q=fstate.q.trim().toLowerCase();
+  let list=ids.filter(fid=>{
+    const kinds=new Set(PATH[fid].map(p=>EV[p.ev].kind));
+    if(fstate.filter==="both" && !(kinds.has("fest")&&kinds.has("award"))) return false;
+    if(fstate.filter==="won" && !PATH[fid].some(p=>p.lvl>=2)) return false;
+    if(q){const f=film(fid); if(![f.ru,f.orig,f.en,f.dir].join(" ").toLowerCase().includes(q)) return false;}
+    return true;
+  });
+  const by={score:(a,b)=>score(b)-score(a)||film(a).ru.localeCompare(film(b).ru),
+            title:(a,b)=>film(a).ru.localeCompare(film(b).ru),
+            first:(a,b)=>firstEvent(a).i-firstEvent(b).i||score(b)-score(a)}[fstate.sort];
+  list.sort(by);
+  return `<section class="event">
+    <div class="fbar">
+      <button class="chip" data-ff="all" aria-pressed="${fstate.filter==="all"}">Все фильмы</button>
+      <button class="chip" data-ff="both" aria-pressed="${fstate.filter==="both"}">Фестиваль → премия</button>
+      <button class="chip" data-ff="won" aria-pressed="${fstate.filter==="won"}">С наградами</button>
+      <input id="fq" type="search" placeholder="Название или режиссёр" value="${esc(fstate.q)}" aria-label="Поиск">
+      <select id="fs" aria-label="Сортировка">
+        <option value="score"${fstate.sort==="score"?" selected":""}>Больше наград — выше</option>
+        <option value="first"${fstate.sort==="first"?" selected":""}>По первому показу</option>
+        <option value="title"${fstate.sort==="title"?" selected":""}>По названию</option>
+      </select>
+      <span class="cnt">${list.length} из ${ids.length}</span>
+    </div>
+    <div class="plegend"><span>Полоска под постером — 10 событий сезона по порядку:</span>
+      <span><b class="lg0"></b>не был</span><span><b class="lg1"></b>участие или номинация</span>
+      <span><b class="lg2"></b>приз или победа</span><span>цвет — событие</span></div>
+    <div class="grid">${list.map(fid=>{const f=film(fid);
+      return `<button class="film" data-open="${fid}">${poster(f)}${pathStrip(fid)}
+        <span class="t">${esc(f.ru)}</span><span class="d">${esc(f.dir)}</span></button>`}).join("")}</div>
+  </section>`;
+}
+
+/* ===================== ТАБЛИЦА ПРЕМИЙ ===================== */
+const TGROUPS=[
+ ["main","Главные",[["film","Лучший фильм"],["dir","Режиссёр"],["actor","Мужская роль"],["actress","Женская роль"],["sactor","Мужская роль второго плана"],["sactress","Женская роль второго плана"]]],
+ ["script","Сценарий",[["orig","Оригинальный сценарий"],["adapt","Адаптированный сценарий"]]],
+ ["special","Особые фильмы",[["intl","Международный фильм"],["anim","Анимационный фильм"],["doc","Документальный фильм"],["british","Британский фильм"],["debut","Дебют"],["family","Детский и семейный фильм"],["comedy","Комедия"],["boxoffice","Кассовые достижения"]]],
+ ["cast","Актёры и кастинг",[["young","Молодой актёр"],["casting","Кастинг"],["stunts","Каскадёры"]]],
+ ["craft","Ремесло",[["cinema","Операторская работа"],["edit","Монтаж"],["design","Художник-постановщик"],["costume","Костюмы"],["makeup","Грим и причёски"],["sound","Звук"],["vfx","Визуальные эффекты"],["score","Музыка"],["song","Песня"]]],
+ ["short","Короткий метр",[["short_anim","Анимационный"],["short_live","Игровой"],["short_doc","Документальный"]]]
+];
+const TCOLS=TGROUPS.flatMap(g=>g[2]);
+const TMAP={
+ critics:{"Лучший фильм":"film","Лучший режиссёр":"dir","Лучшая мужская роль":"actor","Лучшая женская роль":"actress","Мужская роль второго плана":"sactor","Женская роль второго плана":"sactress","Оригинальный сценарий":"orig","Адаптированный сценарий":"adapt","Фильм на иностранном языке":"intl","Анимационный фильм":"anim","Комедия":"comedy","Молодой актёр или актриса":"young","Кастинг и ансамбль":"casting","Актёрский ансамбль":["casting","актёрский ансамбль"],"Операторская работа":"cinema","Монтаж":"edit","Работа художника-постановщика":"design","Костюмы":"costume","Грим и причёски":"makeup","Звук":"sound","Визуальные эффекты":"vfx","Музыка":"score","Песня":"song"},
+ globes:{"Фильм (драма)":["film","драма"],"Фильм (комедия или мюзикл)":["film","комедия или мюзикл"],"Лучший режиссёр":"dir","Мужская роль (драма)":["actor","драма"],"Мужская роль (комедия или мюзикл)":["actor","комедия или мюзикл"],"Женская роль (драма)":["actress","драма"],"Женская роль (комедия или мюзикл)":["actress","комедия или мюзикл"],"Мужская роль второго плана":"sactor","Женская роль второго плана":"sactress","Сценарий":["script","одна категория на оба сценария"],"Неанглоязычный фильм":"intl","Анимационный фильм":"anim","Музыка":"score","Песня":"song","Кассовые и кинодостижения":"boxoffice"},
+ bafta:{"Лучший фильм":"film","Лучший режиссёр":"dir","Мужская роль":"actor","Женская роль":"actress","Мужская роль второго плана":"sactor","Женская роль второго плана":"sactress","Оригинальный сценарий":"orig","Адаптированный сценарий":"adapt","Фильм не на английском языке":"intl","Документальный фильм":"doc","Анимационный фильм":"anim","Выдающийся британский фильм":"british","Дебют британского автора":["debut","британский автор"],"Детский и семейный фильм":"family","Кастинг":"casting","Операторская работа":"cinema","Монтаж":"edit","Работа художника-постановщика":"design","Костюмы":"costume","Грим и причёски":"makeup","Звук":"sound","Визуальные эффекты":"vfx","Музыка":"score","Песня":"song","Британский короткометражный анимационный фильм":["short_anim","британский"],"Британский короткометражный фильм":["short_live","британский"]},
+ actors:{"Актёрский ансамбль":["film","актёрский ансамбль"],"Мужская роль":"actor","Женская роль":"actress","Мужская роль второго плана":"sactor","Женская роль второго плана":"sactress","Каскадёры":"stunts"},
+ oscar:{"Лучший фильм":"film","Лучший режиссёр":"dir","Лучшая мужская роль":"actor","Лучшая женская роль":"actress","Мужская роль второго плана":"sactor","Женская роль второго плана":"sactress","Оригинальный сценарий":"orig","Адаптированный сценарий":"adapt","Международный фильм":"intl","Анимационный фильм":"anim","Документальный фильм":"doc","Кастинг":"casting","Операторская работа":"cinema","Монтаж":"edit","Работа художника-постановщика":"design","Костюмы":"costume","Грим и причёски":"makeup","Звук":"sound","Визуальные эффекты":"vfx","Музыка":"score","Песня":"song","Короткометражный анимационный фильм":"short_anim","Короткометражный игровой фильм":"short_live","Короткометражный документальный фильм":"short_doc"}
+};
+const PERSON=new Set(["dir","actor","actress","sactor","sactress","young","song"]);
+let tgroup="all";
+/* категории невручённой премии берём из последнего сезона, где она уже вручена */
+function templateCats(eid){
+  for(const x of [...SEASONS].reverse()){ const e=x.events.find(v=>v.id===eid); if(e&&e.cats&&e.cats.length) return e.cats.map(c=>c[0]); }
+  return [];
+}
+const isSoon=e=>!e.cats||!e.cats.length;
+const dShort=s=>fmtDay(D(s))+" "+D(s).getUTCFullYear();
+function soonWinners(e){
+  const out={}; templateCats(e.id).forEach(cat=>{ const m=TMAP[e.id][cat]; if(!m) return; const [key]=Array.isArray(m)?m:[m,""]; out[key]=[{soon:true,e}]; });
+  return out;
+}
+function winnersOf(eid){
+  const out={}; EV[eid].cats.forEach(([cat,list])=>{ const m=TMAP[eid][cat]; if(!m) return; const [key,nt]=Array.isArray(m)?m:[m,""];
+    list.filter(x=>x[2]).forEach(w=>(out[key] ||= []).push({fid:w[0], who:w[1]||"", nt})); });
+  return out;
+}
+function renderTable(){
+  const prem=EVENTS.filter(e=>e.kind==="award"), Ws=Object.fromEntries(prem.map(e=>[e.id,isSoon(e)?soonWinners(e):winnersOf(e.id)])), osc=Ws.oscar;
+  const same=(key,w)=>{ const ref = key==="script" ? [...(osc.orig||[]),...(osc.adapt||[])] : (osc[key]||[]);
+    return ref.some(o=>o.fid===w.fid && (!PERSON.has(key) || o.who===w.who)); };
+  const card=(key,w)=>{ if(w.soon) return `<div class="tsoon"><span>узнаем</span><b>${esc(dShort(w.e.start))}</b>${w.e.noms?`<small>номинанты — ${esc(w.e.noms)}</small>`:""}</div>`;
+    const f=film(w.fid);
+    return `<button class="tcard" data-open="${w.fid}">${poster(f)}${pathStrip(w.fid)}
+      ${PERSON.has(key)&&w.who?`<span class="who"><b>${esc(w.who)}</b></span>`:""}<span class="t">${esc(f.ru)}</span>${w.nt?`<span class="nt">${esc(w.nt)}</span>`:""}</button>`; };
+  const groups=TGROUPS.filter(g=>tgroup==="all"||g[0]===tgroup);
+  const row=([key,name])=>`<tr><th class="rowh" scope="row">${esc(name)}</th>${prem.map(e=>{
+      const W=Ws[e.id], cls="";
+      if(key==="adapt" && W.script) return "";
+      if(key==="orig" && W.script) return `<td rowspan="2" class="${cls}"><div class="tcell">${W.script.map(w=>card("script",w)).join("")}</div></td>`;
+      const ws=W[key]; if(!ws) return `<td class="empty${cls}">нет категории</td>`;
+      return `<td class="${cls}"><div class="tcell">${ws.map(w=>card(key,w)).join("")}</div></td>`;
+    }).join("")}</tr>`;
+  const rows=groups.map(g=>{ const cols=g[2].filter(([key])=>prem.some(e=>Ws[e.id][key]||(key==="orig"||key==="adapt")&&Ws[e.id].script));
+    return `<tr class="grp"><th colspan="${prem.length+1}"><span>${esc(g[1])}</span></th></tr>`+cols.map(row).join(""); }).join("");
+  return `<section class="event">
+    <div class="fbar">${ttypeBar()}${[["all","Все категории"],...TGROUPS.map(g=>[g[0],g[1]])].map(([k,n])=>`<button class="chip" data-tg="${k}" aria-pressed="${tgroup===k}">${esc(n)}</button>`).join("")}</div>
+    ${prem.some(isSoon)?`<p class="tbl-note"><b>Премии этого сезона ещё впереди</b> — в клетках даты, когда станут известны победители (и когда объявят номинантов).</p>`:""}
+    <p class="tbl-note">Победители всех кинокатегорий пяти премий сезона. У премий разный набор категорий, поэтому в части клеток стоит «нет категории». У «Золотого глобуса» по два победителя в категориях фильма и главных ролей (драма и комедия), а сценарий — одна общая категория. У Actor Awards в строке «Лучший фильм» — приз за актёрский ансамбль. Полоска под постером — путь фильма по десяти событиям сезона.</p>
+    <div class="tbl-wrap"><table class="ptable">
+      <thead><tr><th class="rowh corner">Номинация</th>${prem.map(e=>`<th class="ph" style="--ec:var(${e.c})"><div class="phin">${trophyHTML(e.id)}<div><b>${esc(e.name)}</b><span>${esc(span(e))}</span></div></div></th>`).join("")}</tr></thead>
+      <tbody>${rows}
+      </tbody></table></div>
+  </section>`;
+}
+
+/* ===================== ТАБЛИЦА ФЕСТИВАЛЕЙ =====================
+   Строки — сопоставимые призы; у фестивалей они называются по-разному, примечание в клетке говорит, как именно. */
+let ttype="awards", fgroup="all";
+try{ const t=localStorage.getItem("season25-ttype"); if(t==="fests"||t==="awards"||t==="years") ttype=t; }catch(e){}
+const awardWins=fid=>(PATH[fid]||[]).filter(p=>EV[p.ev].kind==="award"&&p.lvl===3);
+const awardNoms=fid=>(PATH[fid]||[]).filter(p=>EV[p.ev].kind==="award");
+function ttypeBar(){
+  return `<div class="seg" role="group" aria-label="Какая таблица"><button data-tt="awards" aria-pressed="${ttype==="awards"}">Премии</button><button data-tt="fests" aria-pressed="${ttype==="fests"}">Фестивали</button><button data-tt="years" aria-pressed="${ttype==="years"}">По годам</button></div>`;
+}
+/* ===================== ОДНО СОБЫТИЕ ПО ГОДАМ =====================
+   Столбцы — сезоны, строки — те же призы и категории, что в таблицах сезона. Кубики под постером — путь фильма в его сезоне. */
+let yev="cannes"; try{ const v=localStorage.getItem("season25-yev"); if(v) yev=v; }catch(e){}
+const stripFor=(fid,ctx)=>`<span class="path">${ctx.S.events.map(e=>{const l=Math.max(0,...(ctx.PATH[fid]||[]).filter(p=>p.ev===e.id).map(p=>p.lvl));return `<i class="${l?"l"+l:""}" style="--ec:var(${e.c})" title="${esc(e.name)}"></i>`}).join("")}</span>`;
+function winnersFrom(e){
+  const out={}; (e.cats||[]).forEach(([cat,list])=>{ const m=TMAP[e.id][cat]; if(!m) return; const [key,nt]=Array.isArray(m)?m:[m,""];
+    list.filter(x=>x[2]).forEach(w=>(out[key] ||= []).push({fid:w[0], who:w[1]||"", nt})); });
+  return out;
+}
+function renderYearTable(){
+  if(!EV[yev]) yev="cannes";
+  const kind=EV[yev].kind, cols=SEASONS.map(x=>{ const ctx=seasonPath(x.id), e=x.events.find(v=>v.id===yev), m=x.meta[yev]||{};
+    return {x, ctx, e:Object.assign({},e,m), year:(m.start||"").slice(0,4)}; });
+  const card=(c,fid,who,nt,key)=>{ const f=film(fid);
+    return `<button class="tcard" data-open="${fid}">${poster(f)}${stripFor(fid,c.ctx)}
+      ${who&&(kind==="fest"||PERSON.has(key))?`<span class="who"><b>${esc(who)}</b></span>`:""}<span class="t">${esc(f.ru)}</span>${nt?`<span class="nt">${esc(nt)}</span>`:""}</button>`; };
+  const soonCell=c=>`<div class="tsoon"><span>узнаем</span><b>${esc(dShort(c.e.start))}</b>${c.e.noms?`<small>номинанты — ${esc(c.e.noms)}</small>`:""}</div>`;
+  let groups=[];
+  if(kind==="fest"){
+    const order=[];   // группы и строки в порядке первого появления
+    cols.forEach(c=>(c.x.ft||[]).forEach(([gk,gn,rows])=>{ let g=order.find(o=>o.k===gk); if(!g){ g={k:gk,n:gn,rows:[]}; order.push(g); }
+      rows.forEach(([name,cells])=>{ if(cells[yev] && !g.rows.includes(name)) g.rows.push(name); }); }));
+    const cellOf=(c,name)=>{ for(const [,,rows] of (c.x.ft||[])) for(const [n,cells] of rows) if(n===name) return cells[yev]; return null; };
+    groups=order.filter(g=>g.rows.length).map(g=>({n:g.n, rows:g.rows.map(name=>[name, cols.map(c=>{ const ws=cellOf(c,name);
+      return ws ? `<td><div class="tcell">${ws.map(w=>card(c,w[0],w[1],w[2])).join("")}</div></td>` : `<td class="empty">нет приза</td>`; })])}));
+  } else {
+    const W=cols.map(c=>isSoon(c.e)?null:winnersFrom(c.e)), soonKeys=cols.map(c=>isSoon(c.e)?soonWinners(c.e):null);
+    groups=TGROUPS.map(g=>({n:g[1], rows:g[2].filter(([key])=>cols.some((c,i)=>(W[i]&&W[i][key])||(soonKeys[i]&&soonKeys[i][key]))).map(([key,name])=>[name, cols.map((c,i)=>{
+      if(soonKeys[i]) return soonKeys[i][key] ? `<td>${soonCell(c)}</td>` : `<td class="empty">нет категории</td>`;
+      const ws=W[i][key]; return ws ? `<td><div class="tcell">${ws.map(w=>card(c,w.fid,w.who,w.nt,key)).join("")}</div></td>` : `<td class="empty">нет категории</td>`; })])})).filter(g=>g.rows.length);
+  }
+  const rows=groups.map(g=>`<tr class="grp"><th colspan="${cols.length+1}"><span>${esc(g.n)}</span></th></tr>`+g.rows.map(([name,tds])=>`<tr><th class="rowh" scope="row">${esc(name)}</th>${tds.map((t,i)=>t.replace(/^<td(?: class="([^"]*)")?/,(m,cl)=>`<td class="${cl?cl+" ":""}pal-${cols[i].x.id}"`)).join("")}</tr>`).join("")).join("");
+  return `<section class="event">
+    <div class="fbar">${ttypeBar()}${EVENTS.map((e,i)=>`${i&&e.kind!==EVENTS[i-1].kind?`<span class="chip-sep" aria-hidden="true"></span>`:""}<button class="chip" data-yev="${e.id}" aria-pressed="${yev===e.id}">${esc(e.name)}</button>`).join("")}</div>
+    <p class="tbl-note">Одно событие в разные годы: столбцы — сезоны, строки — сопоставимые призы${kind==="award"?" и категории":""}. Полоска под постером — путь фильма в его собственном сезоне.</p>
+    <div class="tbl-wrap"><table class="ptable">
+      <thead><tr><th class="rowh corner">${kind==="fest"?"Приз":"Номинация"}</th>${cols.map(c=>`<th class="ph pal-${c.x.id}${c.x===S?" cur":""}" style="--ec:var(${c.e.c})"><div class="phin">${trophyHTML(yev)}<div><b>${esc(c.e.name)} ${esc(c.year)}</b><span>сезон ${esc(c.x.title)}${c.x===S?" · текущий":""}</span></div></div></th>`).join("")}</tr></thead>
+      <tbody>${rows}</tbody></table></div>
+  </section>`;
+}
+function renderFestTable(){
+  const fests=EVENTS.filter(e=>e.kind==="fest"), groups=FT.filter(g=>fgroup==="all"||g[0]===fgroup);
+  const card=(w)=>{ const f=film(w[0]);
+    return `<button class="tcard" data-open="${w[0]}">${poster(f)}${pathStrip(w[0])}
+      ${w[1]?`<span class="who"><b>${esc(w[1])}</b></span>`:""}<span class="t">${esc(f.ru)}</span>${w[2]?`<span class="nt">${esc(w[2])}</span>`:""}</button>`; };
+  const rows=groups.map(g=>`<tr class="grp"><th colspan="${fests.length+1}"><span>${esc(g[1])}</span></th></tr>`+g[2].map(([name,cells])=>`<tr><th class="rowh" scope="row">${esc(name)}</th>${fests.map(e=>{
+      const ws=cells[e.id]; if(!ws) return `<td class="empty">нет приза</td>`;
+      return `<td><div class="tcell">${ws.map(card).join("")}</div></td>`; }).join("")}</tr>`).join("")).join("");
+  return `<section class="event">
+    <div class="fbar">${ttypeBar()}${[["all","Все призы"],...FT.map(g=>[g[0],g[1]])].map(([k,n])=>`<button class="chip" data-fg="${k}" aria-pressed="${fgroup===k}">${esc(n)}</button>`).join("")}</div>
+    <p class="tbl-note">Сопоставимые призы пяти фестивалей. Названия наград у фестивалей разные, поэтому под постером указано, как приз называется именно там. У Торонто почти нет жюри: главные награды выбирают зрители. Полоска под постером — путь фильма по десяти событиям сезона.</p>
+    <div class="tbl-wrap"><table class="ptable">
+      <thead><tr><th class="rowh corner">Приз</th>${fests.map(e=>`<th class="ph" style="--ec:var(${e.c})"><div class="phin">${trophyHTML(e.id)}<div><b>${esc(e.name)}</b><span>${esc(span(e))}</span></div></div></th>`).join("")}</tr></thead>
+      <tbody>${rows}
+      </tbody></table></div>
+  </section>`;
+}
+
+/* ===================== ОБЩИЙ РЕНДЕР ===================== */
+let mode="events", view="overview";
+try{ const s=JSON.parse(localStorage.getItem("season25")||"{}"); if(["events","films","table"].includes(s.mode)) mode=s.mode; if(s.view && (s.view==="overview"||EV[s.view])) view=s.view; }catch(e){}
+function save(){ try{localStorage.setItem("season25",JSON.stringify({mode,view,season:S.id}))}catch(e){} }
+function render(){
+  document.querySelectorAll("[data-mode]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===mode)));
+  const app=document.getElementById("app");
+  if(mode==="films") app.innerHTML=renderFilms();
+  else if(mode==="table") app.innerHTML= ttype==="fests" ? renderFestTable() : ttype==="years" ? renderYearTable() : renderTable();
+  else if(view==="overview") app.innerHTML=renderOverview();
+  else { const e=EV[view]; app.innerHTML = e.kind==="fest" ? renderFest(e) : renderAward(e); }
+  const fq=document.getElementById("fq");
+  if(fq){ fq.oninput=ev=>{fstate.q=ev.target.value; const pos=ev.target.selectionStart; render(); const n=document.getElementById("fq"); n.focus(); n.setSelectionRange(pos,pos);}; }
+  const fs=document.getElementById("fs"); if(fs) fs.onchange=ev=>{fstate.sort=ev.target.value; render();};
+  if(mode==="events" && rMode==="events" && rSeason===S.id && rView!==view){   // смена события: содержимое мягко доезжает
+    const idx=v=>v==="overview"?-1:EV[v].i;
+    softIn(app, 14*(Math.sign(idx(view)-idx(rView))||1), 440, 0.15);
+  }
+  rView=view; rMode=mode; rSeason=S.id;
+  updateWheel(); paintAll(); paintTrophies(); save();
+}
+let rView=null, rMode=null, rSeason=null;
+
+/* ---- карточка фильма ---- */
+const dlg=document.getElementById("dlg");
+/* путь фильма в других сезонах (считается по запросу и запоминается) */
+const SEASON_PATHS={};
+function seasonPath(id){
+  if(!SEASON_PATHS[id]){ const keep=S.id; useSeason(id); SEASON_PATHS[id]={S, PATH, EV}; useSeason(keep); }
+  return SEASON_PATHS[id];
+}
+function tripHTML(path, EVX){
+  return `<ul class="trip">${[...new Set(path.map(p=>p.ev))].map(eid=>{const e=EVX[eid], ps=path.filter(p=>p.ev===eid), top=Math.max(...ps.map(p=>p.lvl));
+    return `<li class="${top===3?"g":""}" style="--ec:var(${e.c})">${trophyHTML(eid)}
+    <div><div class="e">${esc(e.name)} · ${esc(span(e))}</div>${ps.map(p=>`<div class="x${p.lvl>=2?" win":""}">${esc(p.text)}</div>`).join("")}</div></li>`}).join("")}</ul>`;
+}
+function otherSeasonsHTML(fid){
+  return SEASONS.filter(x=>x!==S && x.films[fid]).map(x=>{ const o=seasonPath(x.id), p=(o.PATH[fid]||[]).slice().sort((a,b)=>o.EV[a.ev].i-o.EV[b.ev].i||b.lvl-a.lvl);
+    if(!p.length) return "";
+    return `<p class="label" style="margin-top:18px">Также в сезоне ${esc(x.title)} <button class="ss-chip" data-season="${x.id}" style="margin-left:6px">перейти</button></p><div class="pal-${x.id}">${tripHTML(p,o.EV)}</div>`; }).join("");
+}
+function openFilm(fid){
+  const f=film(fid), path=(PATH[fid]||[]).slice().sort((a,b)=>EV[a.ev].i-EV[b.ev].i||b.lvl-a.lvl);
+  document.getElementById("dlg-body").innerHTML=`<div class="card">${poster(f,{lg:true})}
+    <div><h3>${esc(f.ru)}</h3><p class="orig">${esc(f.orig)}${f.en&&f.en!==f.orig?" · "+esc(f.en):""}</p>
+      <p style="margin:8px 0 0">${esc(f.dir)}</p>
+      <p class="label" style="margin-top:16px">Путь по сезону ${esc(S.title)}</p>
+      ${tripHTML(path,EV)}${otherSeasonsHTML(fid)}
+      <div class="links">${f.kp?`<a href="https://www.kinopoisk.ru/film/${f.kp}/" target="_blank" rel="noopener">Кинопоиск ↗</a>`:`<a href="https://www.kinopoisk.ru/index.php?kp_query=${encodeURIComponent(f.orig)}" target="_blank" rel="noopener">Кинопоиск ↗</a>`}
+        <a href="https://letterboxd.com/search/films/${encodeURIComponent(f.en||f.orig)}/" target="_blank" rel="noopener">Letterboxd ↗</a>
+        <a id="imdb-link" data-f="${f.id}" href="${imdbHref(f)}" target="_blank" rel="noopener">IMDb ↗</a></div>
+    </div></div><button class="close" id="dlg-close" aria-label="Закрыть">×</button>`;
+  document.getElementById("dlg-close").onclick=()=>dlg.close();
+  if(!IMDB[fid]) resolveImdb(fid).then(id=>{ const a=document.getElementById("imdb-link"); if(id && a && a.dataset.f===fid) a.href=imdbHref(film(fid)); });
+  paintAll(); paintTrophies();
+  if(dlg.showModal) dlg.showModal(); else dlg.setAttribute("open","");
+}
+dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close()});
+
+/* ---- клики ---- */
+document.addEventListener("click",e=>{
+  const o=e.target.closest("[data-open]"); if(o){openFilm(o.dataset.open);return;}
+  const v=e.target.closest("[data-ev]");
+  if(v && v.dataset.ev && EV[v.dataset.ev]){ mode="events"; view=v.dataset.ev; render(); if(dlg.open) dlg.close();
+    if(!v.classList.contains("wnode")) document.querySelector(".wheel-box").scrollIntoView({block:"start"}); return; }
+  const m=e.target.closest("[data-mode]"); if(m){ mode=m.dataset.mode; if(mode==="events" && m.getAttribute("aria-pressed")==="true") view="overview"; render(); return; }
+  const ff=e.target.closest("[data-ff]"); if(ff){fstate.filter=ff.dataset.ff; render(); return;}
+  const tg=e.target.closest("[data-tg]"); if(tg){tgroup=tg.dataset.tg; render(); return;}
+  const ye=e.target.closest("[data-yev]"); if(ye){ yev=ye.dataset.yev; try{localStorage.setItem("season25-yev",yev)}catch(e){} render(); return; }
+  const tt=e.target.closest("[data-tt]"); if(tt){ttype=tt.dataset.tt; try{localStorage.setItem("season25-ttype",ttype)}catch(e){} render(); return;}
+  const fg=e.target.closest("[data-fg]"); if(fg){fgroup=fg.dataset.fg; render(); return;}
+});
+
+/* ===================== ФОТО: ПОСТЕРЫ ===================== */
+/* точные статьи английской Википедии (из ссылок на страницах событий) */
+/* ---- IMDb: точная страница фильма, если известен его номер (tt…), иначе поиск по названию ---- */
+const IMDB_KEY="season25-imdb";
+let IMDB={}; try{IMDB=JSON.parse(localStorage.getItem(IMDB_KEY)||"{}")}catch(e){}
+function imdbHref(f){ const id=IMDB[f.id];
+  return id ? `https://www.imdb.com/title/${id}/` : `https://www.imdb.com/find/?q=${encodeURIComponent(f.en||f.orig)}&s=tt&ttype=ft`; }
+async function resolveImdb(fid){
+  // Викиданные: по номеру Кинопоиска (P2603) или по статье английской Википедии → номер IMDb (P345)
+  const f=film(fid), t=WIKI_T[fid], parts=[];
+  if(f.kp) parts.push(`{ ?item wdt:P2603 "${f.kp}" }`);
+  if(t) parts.push(`{ ?a schema:about ?item ; schema:isPartOf <https://en.wikipedia.org/> ; schema:name ${JSON.stringify(t)}@en }`);
+  if(!parts.length) return null;
+  try{ const j=await getJSON("https://query.wikidata.org/sparql?format=json&query="+encodeURIComponent(`SELECT ?imdb WHERE { ${parts.join(" UNION ")} ?item wdt:P345 ?imdb } LIMIT 1`));
+    const id=j.results.bindings[0]?.imdb?.value; if(id && /^tt\d+$/.test(id)){ IMDB[fid]=id; store(IMDB_KEY,IMDB); return id; } }catch(e){}
+  return null;
+}
+const POSTER_KEY="season25-posters-v3";
+let pcache={}; try{pcache=JSON.parse(localStorage.getItem(POSTER_KEY)||"{}")}catch(e){}
+const store=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const WAPI=(lang)=>`https://${lang}.wikipedia.org/w/api.php?format=json&origin=*&action=query&prop=pageimages|description&piprop=thumbnail&pithumbsize=500&pilicense=any&redirects=1`;
+const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/ё/g,"е").replace(/[^a-z0-9а-я]+/g," ").trim();
+let netBlocked=false;
+async function getJSON(url){ const r=await fetch(url); if(!r.ok) throw new Error(r.status); return r.json(); }
+// пакетно: заголовки статей → миниатюры (до 50 за запрос)
+async function pageImages(lang, titles){
+  const out={};
+  for(let i=0;i<titles.length;i+=50){
+    const chunk=titles.slice(i,i+50);
+    const j=await getJSON(WAPI(lang)+"&titles="+encodeURIComponent(chunk.join("|")));
+    const map={}; (j.query?.normalized||[]).forEach(n=>map[n.to]=n.from); (j.query?.redirects||[]).forEach(r=>map[r.to]=map[r.from]||r.from);
+    Object.values(j.query?.pages||{}).forEach(p=>{ if(p.thumbnail){ const orig=map[p.title]||p.title; out[orig]={src:p.thumbnail.source,w:p.thumbnail.width,h:p.thumbnail.height,d:p.description||""}; out[p.title]=out[orig]; } });
+  }
+  return out;
+}
+function loadImg(src){ return new Promise(res=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=()=>res(null); im.src=src; }); }
+const looksLikePoster=im=>im && im.naturalWidth>40 && im.naturalHeight>im.naturalWidth*1.15;
+function setPoster(fid,url){ pcache[fid]=url; store(POSTER_KEY,pcache); document.querySelectorAll(`.poster[data-f="${fid}"]`).forEach(el=>paintOne(el)); }
+function paintOne(el){
+  const u=pcache[el.dataset.f]; if(!u || el.querySelector("img")) return;
+  const img=document.createElement("img"); img.alt=""; img.loading="lazy";
+  img.onload=()=>el.classList.add("has-img"); img.onerror=()=>img.remove(); img.src=u; el.appendChild(img);
+}
+function paintAll(){ document.querySelectorAll(".poster[data-f]").forEach(paintOne); }
+async function searchWiki(f){
+  const tries=[["en",`${f.en||f.orig} ${(f.dir||"").split(",")[0]} film`,[norm(f.en),norm(f.orig)]],
+               ["ru",`${f.ru} фильм ${(f.dir||"").split(",")[0]}`,[norm(f.ru),norm(f.orig)]]];
+  for(const [lang,q,names] of tries){
+    const j=await getJSON(WAPI(lang)+"&generator=search&gsrlimit=5&gsrsearch="+encodeURIComponent(q));
+    const pages=Object.values(j.query?.pages||{}).sort((a,b)=>a.index-b.index);
+    const hit=pages.find(p=>p.thumbnail && p.thumbnail.height>p.thumbnail.width*1.15 && !/festival|award|filmography|фестивал|преми/i.test(p.title) && names.filter(Boolean).includes(norm(p.title.replace(/\(.*?\)/g,""))));
+    if(hit) return hit.thumbnail.source;
+  }
+  return "";
+}
+async function loadPosters(){
+  const all=Object.keys(PATH), status=document.getElementById("pstatus");
+  const todo=()=>all.filter(f=>!pcache[f]);
+  const show=(phase)=>{ status.textContent=`Постеры: найдено ${all.length-todo().length} из ${all.length}${phase?" · "+phase:""}`; };
+  // 0. Заранее собранный файл posters.json (лежит рядом со страницей на GitHub Pages; собирается скриптом через TMDB)
+  if(location.protocol!=="file:") try{ const r=await fetch("posters.json",{cache:"no-cache"}); if(r.ok){ const pj=await r.json(); let n=0;
+    Object.entries(pj.films||{}).forEach(([fid,x])=>{ if(!FILMS[fid]) return; if(x.imdb && !IMDB[fid]) IMDB[fid]=x.imdb; if(x.poster){ pcache[fid]=x.poster; n++; } });
+    store(IMDB_KEY,IMDB); store(POSTER_KEY,pcache);
+    if(n){ const c=document.getElementById("tmdb-credit"); if(c) c.hidden=false; } } }catch(e){}
+  show("ищу на Кинопоиске…"); paintAll();
+  // 1. Кинопоиск по номеру фильма
+  const q1=todo().filter(f=>film(f).kp); let okKP=0;
+  await Promise.all(Array.from({length:8},async()=>{ while(q1.length){ const fid=q1.shift();
+    const u=`https://kinopoiskapiunofficial.tech/images/posters/kp/${fid}.jpg`; const im=await loadImg(u);
+    if(looksLikePoster(im)){ okKP++; setPoster(fid,u); show("ищу на Кинопоиске…"); } } }));
+  // 2. Статьи Википедии: точные ссылки со страниц событий, затем «Название (2025 film)», «Название (film)», «Название»
+  show("ищу в Википедии…");
+  try{
+    const cand={}; todo().forEach(fid=>{ const f=film(fid), L=[]; if(WIKI_T[fid]) L.push([WIKI_T[fid],1]);
+      [...new Set([f.en,f.orig].filter(t=>t && /^[\x20-\x7E\u00C0-\u024F’'–]+$/.test(t)))].forEach(t=>{ L.push([t+` (${Y0} film)`,0],[t+` (${Y0-1} film)`,0],[t+" (film)",0],[t,0]); });
+      cand[fid]=L; });
+    const titles=[...new Set(Object.values(cand).flat().map(x=>x[0]))];
+    if(titles.length){ const imgs=await pageImages("en",titles);
+      Object.entries(cand).forEach(([fid,L])=>{ for(const [t,exact] of L){ const im=imgs[t]; if(!im || im.h<im.w*1.1) continue;
+        if(exact || (/film|documentary|movie/i.test(im.d) && /20\d\d/.test(im.d))){ setPoster(fid,im.src); break; } } }); }
+  }catch(e){ if(all.length===todo().length) netBlocked=true; }
+  // 3. Викиданные: номер Кинопоиска (свойство P2603) → статьи Википедии → постер из статьи
+  show("ищу через Викиданные…");
+  try{
+    const ids=todo().filter(f=>film(f).kp);
+    if(ids.length){
+      const sparql=`SELECT ?kp ?en ?ru WHERE { VALUES ?kp { ${ids.map(i=>`"${i}"`).join(" ")} } ?item wdt:P2603 ?kp .
+        OPTIONAL { ?en schema:about ?item ; schema:isPartOf <https://en.wikipedia.org/> } OPTIONAL { ?ru schema:about ?item ; schema:isPartOf <https://ru.wikipedia.org/> } }`;
+      const j=await getJSON("https://query.wikidata.org/sparql?format=json&query="+encodeURIComponent(sparql));
+      const t=u=>decodeURIComponent(u.split("/wiki/")[1]||"").replace(/_/g," ");
+      const byLang={en:{},ru:{}};
+      j.results.bindings.forEach(b=>{ if(b.en) byLang.en[t(b.en.value)]=b.kp.value; if(b.ru) byLang.ru[t(b.ru.value)]=b.kp.value; });
+      for(const lang of ["en","ru"]){
+        const titles=Object.keys(byLang[lang]).filter(x=>!pcache[byLang[lang][x]]); if(!titles.length) continue;
+        const imgs=await pageImages(lang,titles);
+        titles.forEach(x=>{ const im=imgs[x]; if(im && im.h>im.w*1.1) setPoster(byLang[lang][x], im.src); });
+        show("ищу через Викиданные…");
+      }
+    }
+  }catch(e){}
+  // 4. Поиск по названию и режиссёру в английской и русской Википедии
+  if(!netBlocked){
+    const q3=todo();
+    await Promise.all(Array.from({length:4},async()=>{ while(q3.length){ const fid=q3.shift();
+      try{ const u=await searchWiki(film(fid)); if(u) setPoster(fid,u); }catch(e){} show("ищу по названиям…"); } }));
+  }
+  const miss=todo();
+  if(netBlocked && miss.length===all.length){ status.textContent="Постеры здесь не загружаются: этот просмотр блокирует внешние картинки. Скачай файл и открой его в браузере."; return; }
+  show("");
+  const box=document.getElementById("missing");
+  if(miss.length){ box.hidden=false; box.querySelector("summary").textContent=`Не нашлись постеры у ${miss.length} фильмов — список`;
+    box.querySelector("ul").innerHTML=miss.map(fid=>{const f=film(fid);return `<li>${esc(f.ru)}${f.orig!==f.ru?` <span style="opacity:.7">(${esc(f.orig)})</span>`:""}</li>`}).join(""); }
+  else box.hidden=true;
+}
+function paintTrophies(){}
+
+/* ===================== СЕЗОНЫ: переключатель в заголовке ===================== */
+function seasonHeader(){
+  document.getElementById("season-title").textContent=S.title;
+  document.getElementById("season-lede").textContent=S.lede||"";
+  document.title="Киносезон "+S.title;
+  const k=SEASONS.indexOf(S);
+  document.getElementById("season-chips").innerHTML=SEASONS.map(x=>`<button class="ss-chip" data-season="${x.id}" aria-pressed="${x===S}">${esc(x.title)}${x.ongoing?`<small>идёт</small>`:""}</button>`).join("");
+  document.querySelectorAll("[data-season-step]").forEach(b=>{ const j=k+ +b.dataset.seasonStep; b.disabled=j<0||j>=SEASONS.length; });
+}
+function switchSeason(id){
+  if(id===S.id) return;
+  useSeason(id);
+  try{ history.replaceState(null,"","#"+S.id); }catch(e){}
+  if(view!=="overview" && !EV[view]) view="overview";
+  cancelAnimationFrame(wanim); wanimOn=false; tweenOn=false; OFF=[];
+  const box=document.getElementById("showcase"); box.className="showcase"; box.innerHTML="";
+  buildWheel(); lastSlot=""; lastKind="";
+  seasonHeader(); render(); layoutWheel(); loadPosters();
+}
+/* смена сезона из шапки: всё гаснет с лёгким сдвигом в сторону листания и проявляется уже новым сезоном */
+const seasonEls=()=>[document.getElementById("season-title"), document.getElementById("season-lede"), wscroll, document.getElementById("showcase"), document.getElementById("app")];
+function seasonFadeIn(dir){ seasonEls().forEach((el,i)=>softIn(el, 14*dir, 480+i*45)); }
+let seasonBusy=false;
+function seasonGo(id){
+  const k0=SEASONS.indexOf(S), k=SEASONS.findIndex(x=>x.id===id);
+  if(k<0 || k===k0 || seasonBusy || jumping) return;
+  if(reduceMotion){ switchSeason(id); return; }
+  const dir=Math.sign(k-k0); seasonBusy=true;
+  const outs=seasonEls().map(el=>el.animate([{opacity:1,transform:"none"},{opacity:0,transform:`translateX(${-10*dir}px)`}],{duration:200,easing:"cubic-bezier(.4,0,1,1)",fill:"forwards"}));
+  outs[outs.length-1].onfinish=()=>{ switchSeason(id); outs.forEach(a=>a.cancel()); seasonFadeIn(dir); seasonBusy=false; };
+}
+document.addEventListener("click",e=>{
+  const c=e.target.closest("[data-season]"); if(c){ if(dlg.open) dlg.close(); seasonGo(c.dataset.season); return; }
+  const a=e.target.closest("[data-season-step]"); if(a){ const k=SEASONS.indexOf(S)+ +a.dataset.seasonStep; if(SEASONS[k]) seasonGo(SEASONS[k].id); }
+});
+window.addEventListener("hashchange",()=>{ const h=decodeURIComponent(location.hash.slice(1)); if(SEASONS.some(x=>x.id===h)) switchSeason(h); });
+
+/* ===================== ЗАПУСК ===================== */
+seasonHeader(); buildWheel(); render(); layoutWheel();
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(layoutWheel);
+loadPosters();
+</script>
