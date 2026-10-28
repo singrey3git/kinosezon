@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://singrey3git.github.io/kinosezon/sitemap.xml
+Sitemap: https://kinosezon.org/sitemap.xml
