@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Киносезон — победители кинофестивалей и премий 2024–2027</title>
-<meta name="description" content="Каталог фильмов сезона через их путь по фестивалям и премиям: где фильм впервые показали, что он там получил и докуда дошёл — от Сандэнса и Канн до «Оскара». Сезоны 2024/25, 2025/26 и 2026/27.">
+<title>Мировой киносезон — победители кинофестивалей и премий 2024–2027</title>
+<meta name="description" content="Пять фестивалей. Пять премий. Сотни историй. Проследите путь фильмов от первых фестивальных показов до главных кинопремий: Сандэнс, Берлинале, Канны, Венеция, Торонто и «Оскар». Сезоны 2024/25, 2025/26 и 2026/27.">
 <link rel="canonical" href="https://kinosezon.org/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
@@ -15,18 +15,18 @@
 <meta name="yandex-verification" content="070c849f2d52c844">
 <!-- превью ссылки в мессенджерах и соцсетях -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Киносезон">
+<meta property="og:site_name" content="Мировой киносезон">
 <meta property="og:locale" content="ru_RU">
 <meta property="og:url" content="https://kinosezon.org/">
-<meta property="og:title" content="Киносезон — путь фильмов от фестивалей до «Оскара»">
+<meta property="og:title" content="Мировой киносезон — путь фильмов от фестивалей до «Оскара»">
 <meta property="og:description" content="Сандэнс, Берлинале, Канны, Венеция и Торонто — и пять главных премий: Critics' Choice, «Золотой глобус», BAFTA, Actor Awards и «Оскар». Три сезона, 2000+ фильмов.">
 <meta property="og:image" content="https://kinosezon.org/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Спираль киносезона с десятью событиями и постерами фестивалей и премий">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Киносезон — путь фильмов от фестивалей до «Оскара»">
-<meta name="twitter:description" content="Каталог фильмов сезона через их путь по фестивалям и премиям: где фильм впервые показали, что он там получил и докуда дошёл — от Сандэнса и Канн до «Оскара». Сезоны 2024/25, 2025/26 и 2026/27.">
+<meta name="twitter:title" content="Мировой киносезон — путь фильмов от фестивалей до «Оскара»">
+<meta name="twitter:description" content="Пять фестивалей. Пять премий. Сотни историй. Проследите путь фильмов от первых фестивальных показов до главных кинопремий: Сандэнс, Берлинале, Канны, Венеция, Торонто и «Оскар». Сезоны 2024/25, 2025/26 и 2026/27.">
 <meta name="twitter:image" content="https://kinosezon.org/og.jpg">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -73,6 +73,8 @@ button{font:inherit;color:inherit}
 .top{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;justify-content:space-between;border-bottom:2px solid var(--fg);padding-bottom:12px}
 h1{font:700 clamp(32px,5.6vw,54px)/.95 var(--f-display);text-transform:uppercase;margin:0}
 .lede{color:var(--muted);margin:6px 0 0;max-width:80ch;text-wrap:pretty}
+h1 .kicker{display:block;font:600 clamp(12px,1.4vw,14px)/1.2 var(--f-mono);letter-spacing:.22em;color:var(--muted);margin-bottom:6px}
+.slogan{margin:10px 0 0;font:600 clamp(18px,2.2vw,24px)/1.2 var(--f-display);text-transform:uppercase;letter-spacing:.01em}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;background:var(--surface);padding:3px;gap:2px}
 .seg button{border:0;background:none;padding:6px 13px;border-radius:999px;cursor:pointer;font-weight:500;font-size:14px;white-space:nowrap}
 .seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
@@ -479,9 +481,10 @@ dialog::backdrop{background:rgba(10,12,16,.6)}
 <div class="wrap">
   <div class="top">
     <div>
-      <div class="season-sw"><h1>Киносезон <span id="season-title"></span></h1>
+      <div class="season-sw"><h1><span class="kicker">Мировой киносезон</span><span id="season-title"></span></h1>
         <div class="ss-nav" role="group" aria-label="Сезон"><button class="ss-arr" data-season-step="-1" aria-label="Предыдущий сезон">‹</button><span id="season-chips"></span><button class="ss-arr" data-season-step="1" aria-label="Следующий сезон">›</button></div></div>
-      <p class="lede">Каталог фильмов сезона через их путь по фестивалям и премиям: где фильм впервые показали, что он там получил и докуда дошёл — от Сандэнса и Канн до «Оскара».</p>
+      <p class="slogan">Пять фестивалей. Пять премий. Сотни историй.</p>
+      <p class="lede">Проследите путь фильмов от первых фестивальных показов до главных кинопремий.</p>
       <p class="lede lede2" id="season-lede"></p>
     </div>
     <div class="seg" role="group" aria-label="Режим">
@@ -1013,7 +1016,7 @@ function layoutWheel(){
   document.getElementById("wheel-hint").textContent = mode!=="events" ? `Сезон на одной линии: январь ${Y0} → март ${Y0+1}. Нажми на событие, чтобы открыть его`
     : wmode==="ring"
     ? `Спираль времени: январь ${Y0} в центре → март ${Y0+1} снаружи. Зима сверху, лето снизу. Значок можно оттянуть. Начало и конец ленты ведут в соседние сезоны`
-    : `Спираль, размотанная в линию: январь ${Y0} → март ${Y0+1}. Значок можно оттянуть. Начало и конец ленты ведут в соседние сезоны`;
+    : `Лента сезона: январь ${Y0} → март ${Y0+1}. Нажмите на значок события, чтобы открыть его. Начало и конец ленты ведут в соседние сезоны`;
 }
 let wanimOn=false, wanimTo=null;
 function animateWheel(target){
@@ -1544,7 +1547,7 @@ function paintTrophies(){}
 function seasonHeader(){
   document.getElementById("season-title").textContent=S.title;
   document.getElementById("season-lede").textContent=S.lede||"";
-  document.title="Киносезон "+S.title+" — фестивали и премии";
+  document.title="Мировой киносезон "+S.title;
   const k=SEASONS.indexOf(S);
   document.getElementById("season-chips").innerHTML=SEASONS.map(x=>`<button class="ss-chip" data-season="${x.id}" aria-pressed="${x===S}">${esc(x.title)}${x.ongoing?`<small>идёт</small>`:""}</button>`).join("");
   document.querySelectorAll("[data-season-step]").forEach(b=>{ const j=k+ +b.dataset.seasonStep; b.disabled=j<0||j>=SEASONS.length; });
