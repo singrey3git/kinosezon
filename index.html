@@ -476,6 +476,18 @@ dialog::backdrop{background:rgba(10,12,16,.6)}
 .path i[data-tip]{cursor:help}
 .tip{position:fixed;z-index:1000;max-width:300px;background:var(--fg);color:var(--bg);border-radius:6px;padding:7px 10px;font:12.5px/1.4 var(--f-body);pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.25);border-left:4px solid var(--tc,var(--fg))}
 .tip b{display:block;font-weight:600}.tip span{display:block;opacity:.85}
+
+.howto-btn{transition:background .2s,color .2s,border-color .2s,transform .2s}
+.howto-btn:hover,.howto-btn:focus-visible{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-1px)}
+.howto-btn:hover::before,.howto-btn:focus-visible::before{background:#fff;color:var(--accent)}
+.howto-btn.beacon{animation:beacon 2.2s ease-out 1s 3}
+@keyframes beacon{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 55%,transparent)}70%,100%{box-shadow:0 0 0 12px transparent}}
+@media (prefers-reduced-motion:reduce){.howto-btn.beacon{animation:none}}
+.howto-inline{transition:border-color .2s}
+.howto-inline summary{list-style:none;display:inline-flex;align-items:center;gap:6px}
+.howto-inline summary::-webkit-details-marker{display:none}
+.howto-inline summary::before{content:"?";display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:var(--fg);color:var(--bg);font:700 11px var(--f-mono)}
+.howto-inline:hover{border-color:var(--accent)}.howto-inline summary:hover{color:var(--accent)}.howto-inline summary:hover::before{background:var(--accent);color:#fff}
 </style>
 
 <div class="wrap">
@@ -1216,7 +1228,7 @@ function renderFilms(){
       </select>
       <span class="cnt">${list.length} из ${ids.length}</span>
     </div>
-    <details class="howto-inline" open><summary>Как читать кубики под постерами</summary>${cubesLegend()}</details>
+    <details class="howto-inline"><summary>Как читать кубики под постерами</summary>${cubesLegend()}</details>
     <div class="grid">${list.map(fid=>{const f=film(fid);
       return `<button class="film" data-open="${fid}">${poster(f)}${pathStrip(fid)}
         <span class="t">${esc(f.ru)}</span><span class="d">${esc(f.dir)}</span></button>`}).join("")}</div>
@@ -1546,7 +1558,8 @@ function paintTrophies(){}
 /* ===================== СЕЗОНЫ: переключатель в заголовке ===================== */
 function seasonHeader(){
   document.getElementById("season-title").textContent=S.title;
-  document.getElementById("season-lede").textContent=S.lede||"";
+  // срок сезона вместо повтора «5 фестивалей, 5 премий» (это уже сказано в слогане)
+  document.getElementById("season-lede").textContent = `Январь ${S.y0} — март ${S.y0+1}: фестивали ${S.y0} года${S.ongoing?" прошли":""}, премии ${S.y0+1}\u2011го${S.ongoing?" впереди":""}.`;
   document.title="Мировой киносезон "+S.title;
   const k=SEASONS.indexOf(S);
   document.getElementById("season-chips").innerHTML=SEASONS.map(x=>`<button class="ss-chip" data-season="${x.id}" aria-pressed="${x===S}">${esc(x.title)}${x.ongoing?`<small>идёт</small>`:""}</button>`).join("");
@@ -1582,7 +1595,7 @@ document.addEventListener("click",e=>{
 const howBtn=document.getElementById("howto-btn"), howBox=document.getElementById("howto");
 function setHowto(open,save){ howBox.hidden=!open; howBtn.setAttribute("aria-expanded",String(open)); if(open) document.getElementById("howto-legend").innerHTML=cubesLegend();
   if(save) try{ localStorage.setItem("season25-howto",open?"1":"0"); }catch(e){} if(G) layoutWheel(); }
-howBtn.addEventListener("click",()=>setHowto(howBox.hidden,true));
+howBtn.addEventListener("click",()=>{ howBtn.classList.remove("beacon"); setHowto(howBox.hidden,true); });
 /* подсказка у кубиков (и у любого элемента с data-tip) */
 const tipEl=document.createElement("div"); tipEl.className="tip"; tipEl.hidden=true; document.body.appendChild(tipEl);
 document.addEventListener("mouseover",e=>{ const t=e.target.closest&&e.target.closest("[data-tip]"); if(!t){ tipEl.hidden=true; return; }
@@ -1597,7 +1610,7 @@ window.addEventListener("hashchange",()=>{ const h=decodeURIComponent(location.h
 
 /* ===================== ЗАПУСК ===================== */
 seasonHeader(); buildWheel(); render(); layoutWheel();
-{ let h=null; try{ h=localStorage.getItem("season25-howto"); }catch(e){} setHowto(h==="1" || (h===null && innerWidth>=900), false); }   // на телефоне панель длинная — по умолчанию закрыта
+{ let h=null; try{ h=localStorage.getItem("season25-howto"); }catch(e){} setHowto(h==="1", false); if(h===null) howBtn.classList.add("beacon"); }   // по умолчанию скрыто; кто ни разу не открывал — кнопка мягко пульсирует
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(layoutWheel);
 loadPosters();
 </script>
