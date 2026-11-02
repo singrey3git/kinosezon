@@ -473,9 +473,9 @@ dialog::backdrop{background:rgba(10,12,16,.6)}
 .howto-inline .legend{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:10px 28px;align-items:start}
 .howto-inline .lg-note{grid-column:1/-1}
 @media (max-width:700px){.howto-inline .legend{grid-template-columns:1fr}}
-.path i[data-tip]{cursor:help}
-.tip{position:fixed;z-index:1000;max-width:300px;background:var(--fg);color:var(--bg);border-radius:6px;padding:7px 10px;font:12.5px/1.4 var(--f-body);pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.25);border-left:4px solid var(--tc,var(--fg))}
-.tip b{display:block;font-weight:600}.tip span{display:block;opacity:.85}
+.path i[data-tip]{cursor:inherit}
+.tip{position:fixed;z-index:1000;white-space:nowrap;background:color-mix(in srgb,var(--fg) 72%,transparent);color:var(--bg);border-radius:4px;padding:2px 7px;font:500 11px/1.4 var(--f-mono);letter-spacing:.02em;pointer-events:none;opacity:0;transition:opacity .25s ease}
+.tip.on{opacity:1}
 
 .howto-btn{transition:background .2s,color .2s,border-color .2s,transform .2s}
 .howto-btn:hover,.howto-btn:focus-visible{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-1px)}
@@ -497,7 +497,6 @@ dialog::backdrop{background:rgba(10,12,16,.6)}
         <div class="ss-nav" role="group" aria-label="Сезон"><button class="ss-arr" data-season-step="-1" aria-label="Предыдущий сезон">‹</button><span id="season-chips"></span><button class="ss-arr" data-season-step="1" aria-label="Следующий сезон">›</button></div></div>
       <p class="slogan">Пять фестивалей. Пять премий. Сотни историй.</p>
       <p class="lede">Проследите путь фильмов от первых фестивальных показов до главных кинопремий.</p>
-      <p class="lede lede2" id="season-lede"></p>
     </div>
     <div class="seg" role="group" aria-label="Режим">
       <button id="m-events" data-mode="events" aria-pressed="true">События</button>
@@ -1074,21 +1073,11 @@ function renderOverview(){
     }).join("")}</div></section>`;
 }
 /* кубики под постером: 10 событий сезона; у каждого подсказка — что именно было у фильма на этом событии */
-function cubeTip(e, ps){
-  if(!ps.length) return `${e.name}\nфильма здесь не было`;
-  const clean=t=>t.replace(/^(Победа|Номинация): /,"");
-  let head, lines;
-  if(e.kind==="fest"){ head=Math.max(...ps.map(p=>p.lvl))>=2?"приз":"в программе"; lines=ps.map(p=>(p.lvl>=2?"★ ":"")+clean(p.text)); }
-  else { const w=ps.filter(p=>p.lvl>=2), n=ps.filter(p=>p.lvl<2);
-    head=[w.length?plural(w.length,"победа","победы","побед"):"", n.length?plural(n.length,"номинация","номинации","номинаций"):""].filter(Boolean).join(", ");
-    lines=[...w.map(p=>"★ "+clean(p.text)), ...n.map(p=>clean(p.text))]; }
-  if(lines.length>7) lines=[...lines.slice(0,6), `и ещё ${lines.length-6} — в карточке фильма`];
-  return `${e.name} · ${head}\n`+lines.join("\n");
-}
+function cubeTip(e){ return e.name; }   // при наведении — только название события; весь путь — в карточке фильма
 function stripHTML(fid, events, PX){
   const parts=events.map(e=>{ const ps=(PX[fid]||[]).filter(p=>p.ev===e.id), l=Math.max(0,...ps.map(p=>p.lvl)); return {e,ps,l}; });
   const said=parts.filter(x=>x.l).map(x=>x.e.name+(x.l>=2?" — приз или победа":" — участие")).join("; ");
-  return `<span class="path" role="img" aria-label="Путь фильма: ${esc(said||"нет данных")}">${parts.map(({e,ps,l})=>`<i class="${l?"l"+l:""}" style="--ec:var(${e.c})" data-tip="${esc(cubeTip(e,ps))}"></i>`).join("")}</span>`;
+  return `<span class="path" role="img" aria-label="Путь фильма: ${esc(said||"нет данных")}">${parts.map(({e,ps,l})=>`<i class="${l?"l"+l:""}" style="--ec:var(${e.c})" data-tip="${esc(cubeTip(e))}"></i>`).join("")}</span>`;
 }
 const pathStrip=fid=>stripHTML(fid, EVENTS, PATH);
 function awardCard(a, evId){
@@ -1199,7 +1188,7 @@ function cubesLegend(){
       <li><span class="path big one"><i class="l1" style="--ec:var(--e-cannes)"></i></span>цвет события — показ в программе или номинация</li>
       <li><span class="path big one"><i class="l2" style="--ec:var(--e-cannes)"></i></span>с белой точкой — приз или победа</li>
     </ul>
-    <p class="lg-note">Кубики идут в порядке сезона: Сандэнс, Берлинале, Канны, Венеция, Торонто, затем Critics’ Choice, «Глобус», BAFTA, Actor Awards, «Оскар». Наведите на кубик — появится, что именно было у фильма. В примере фильм получил приз в Каннах, показан в Торонто, номинирован на Critics’ Choice, победил на «Глобусе» и «Оскаре».</p>
+    <p class="lg-note">Кубики идут в порядке сезона: Сандэнс, Берлинале, Канны, Венеция, Торонто, затем Critics’ Choice, «Глобус», BAFTA, Actor Awards, «Оскар». Наведите на кубик — появится название события, нажмите на постер — откроется весь путь фильма. В примере фильм получил приз в Каннах, показан в Торонто, номинирован на Critics’ Choice, победил на «Глобусе» и «Оскаре».</p>
   </div>`;
 }
 function renderFilms(){
@@ -1558,9 +1547,7 @@ function paintTrophies(){}
 /* ===================== СЕЗОНЫ: переключатель в заголовке ===================== */
 function seasonHeader(){
   document.getElementById("season-title").textContent=S.title;
-  // срок сезона вместо повтора «5 фестивалей, 5 премий» (это уже сказано в слогане)
-  document.getElementById("season-lede").textContent = `Январь ${S.y0} — март ${S.y0+1}: фестивали ${S.y0} года${S.ongoing?" прошли":""}, премии ${S.y0+1}\u2011го${S.ongoing?" впереди":""}.`;
-  document.title="Мировой киносезон "+S.title;
+    document.title="Мировой киносезон "+S.title;
   const k=SEASONS.indexOf(S);
   document.getElementById("season-chips").innerHTML=SEASONS.map(x=>`<button class="ss-chip" data-season="${x.id}" aria-pressed="${x===S}">${esc(x.title)}${x.ongoing?`<small>идёт</small>`:""}</button>`).join("");
   document.querySelectorAll("[data-season-step]").forEach(b=>{ const j=k+ +b.dataset.seasonStep; b.disabled=j<0||j>=SEASONS.length; });
@@ -1576,7 +1563,7 @@ function switchSeason(id){
   seasonHeader(); render(); layoutWheel(); loadPosters();
 }
 /* смена сезона из шапки: всё гаснет с лёгким сдвигом в сторону листания и проявляется уже новым сезоном */
-const seasonEls=()=>[document.getElementById("season-title"), document.getElementById("season-lede"), wscroll, document.getElementById("showcase"), document.getElementById("app")];
+const seasonEls=()=>[document.getElementById("season-title"), wscroll, document.getElementById("showcase"), document.getElementById("app")].filter(Boolean);
 function seasonFadeIn(dir){ seasonEls().forEach((el,i)=>softIn(el, 14*dir, 480+i*45)); }
 let seasonBusy=false;
 function seasonGo(id){
@@ -1599,8 +1586,7 @@ howBtn.addEventListener("click",()=>{ howBtn.classList.remove("beacon"); setHowt
 /* подсказка у кубиков (и у любого элемента с data-tip) */
 const tipEl=document.createElement("div"); tipEl.className="tip"; tipEl.hidden=true; document.body.appendChild(tipEl);
 document.addEventListener("mouseover",e=>{ const t=e.target.closest&&e.target.closest("[data-tip]"); if(!t){ tipEl.hidden=true; return; }
-  const [h,...rest]=t.dataset.tip.split("\n"); tipEl.innerHTML=`<b>${esc(h)}</b>${rest.map(x=>`<span>${esc(x)}</span>`).join("")}`;
-  tipEl.style.setProperty("--tc", getComputedStyle(t).getPropertyValue("--ec")||"var(--fg)"); tipEl.hidden=false;
+  tipEl.textContent=t.dataset.tip; tipEl.hidden=false; tipEl.classList.remove("on"); void tipEl.offsetWidth; tipEl.classList.add("on");
   const r=t.getBoundingClientRect(), w=tipEl.offsetWidth, hh=tipEl.offsetHeight;
   let x=r.left+r.width/2-w/2; x=Math.max(8,Math.min(innerWidth-w-8,x)); let y=r.top-hh-8; if(y<8) y=r.bottom+8;
   tipEl.style.left=x+"px"; tipEl.style.top=y+"px"; });
