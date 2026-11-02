@@ -82,7 +82,7 @@ h1{font:700 clamp(32px,5.6vw,54px)/.95 var(--f-display);text-transform:uppercase
 .wheel-bar{display:flex;gap:8px 14px;align-items:center;justify-content:space-between;margin-bottom:6px}
 .wheel-bar .seg{flex:none;margin-left:auto}
 .wheel-bar .hint{font:12px/1.4 var(--f-mono);color:var(--muted);flex:1 1 auto;min-width:0}
-@media (max-width:640px){.wheel-bar{flex-wrap:wrap}.wheel-bar .hint{flex-basis:100%;order:2}.wheel-bar .seg{order:1}}
+@media (max-width:640px){.wheel-bar{flex-wrap:wrap}.wheel-bar .hint{flex-basis:100%;order:2}.wheel-bar .seg,.wheel-bar .howto-btn{order:1}}
 .wheel-scroll{overflow-x:auto;overflow-y:hidden}
 .wheel{position:relative;margin:0 auto}
 .wheel-scroll.jumping{overflow:hidden}
@@ -288,7 +288,7 @@ details.missing ul{columns:3 220px;margin:8px 0 0;padding-left:18px}
 .seo-body li{margin:2px 0;break-inside:avoid}
 .seo-body .lnk{cursor:pointer;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
 .seo-body .lnk:hover{text-decoration-color:currentColor}
-footer{color:var(--muted);font-size:13px;line-height:1.5;border-top:1px solid var(--line);padding-top:18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 32px}
+footer{color:var(--muted);font-size:13px;line-height:1.5;border-top:1px solid var(--line);padding-top:18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 32px}
 footer h4{margin:0 0 6px;font:600 12px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--fg)}
 footer p{margin:0 0 8px}
 @media (max-width:760px){footer{grid-template-columns:1fr}}
@@ -318,7 +318,10 @@ dialog::backdrop{background:rgba(10,12,16,.6)}
 .trip .x.win{font-weight:600}
 .card .links{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .card .links a{font:500 13px var(--f-body);text-decoration:none;border:1px solid var(--line);padding:6px 11px;border-radius:6px}
-.card .close{position:absolute;top:8px;right:8px;border:0;background:var(--bg);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px}
+/* крестик закреплён в правом верхнем углу окна и не уезжает при прокрутке карточки */
+.dlg-top{position:sticky;top:0;height:0;z-index:5}
+.dlg-top .close{position:absolute;top:10px;right:10px;border:1px solid var(--line);background:var(--surface);color:var(--fg);width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:20px;line-height:1;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.dlg-top .close:hover{background:var(--fg);color:var(--bg)}
 @media (max-width:560px){.card{grid-template-columns:1fr;padding:16px}.card .poster{max-width:160px}}
 
 /* встроенные фото статуэток и логотипы событий */
@@ -443,6 +446,34 @@ dialog::backdrop{background:rgba(10,12,16,.6)}
 /* шапка таблиц: одна крупная статуэтка */
 .phin{flex-direction:column;align-items:center;gap:8px}
 .phin .trophy{width:101px;height:134px;border-radius:10px;border:2px solid var(--ec);padding:6px}
+
+/* «Как читать», легенда кубиков, подсказка */
+.howto-btn{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font:600 13px var(--f-body);cursor:pointer}
+.howto-btn::before{content:"?";display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:var(--fg);color:var(--bg);font:700 11px var(--f-mono);margin-right:6px;vertical-align:-2px}
+.howto-btn[aria-expanded="true"]{background:var(--fg);color:var(--bg)}.howto-btn[aria-expanded="true"]::before{background:var(--bg);color:var(--fg)}
+.howto{border:1px solid var(--line);border-radius:8px;background:var(--bg);padding:14px 16px;margin:4px 0 10px}
+.howto-cols{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:14px 28px}
+@media (max-width:900px){.howto-cols{grid-template-columns:1fr}}
+.howto h4{margin:0 0 6px;font:600 12px var(--f-mono);letter-spacing:.12em;text-transform:uppercase}
+.howto p{margin:0 0 8px;font-size:13.5px;line-height:1.5;color:var(--muted)}
+.legend{display:flex;flex-direction:column;gap:10px}
+.path.big{height:16px;gap:3px;grid-template-columns:repeat(5,1fr) 6px repeat(5,1fr)}
+.path.big i.l2,.path.big i.l3{background-image:radial-gradient(circle at 50% 50%,var(--dot) 0 2.6px,transparent 3.2px)}
+.lg-demo{max-width:300px}
+.lg-axis{display:grid;grid-template-columns:1fr 6px 1fr;font:11px var(--f-mono);color:var(--muted);margin-top:4px}.lg-axis span:last-child{grid-column:3}
+.lg-keys{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:13px}
+.lg-keys li{display:flex;gap:10px;align-items:center}
+.path.big.one{display:inline-grid;grid-template-columns:22px;width:22px;flex:none}
+.lg-note{margin:0;font-size:12.5px;color:var(--muted);line-height:1.5}
+.howto-inline{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:10px 14px}
+.howto-inline summary{cursor:pointer;font:600 13px var(--f-body)}
+.howto-inline[open] summary{margin-bottom:10px}
+.howto-inline .legend{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:10px 28px;align-items:start}
+.howto-inline .lg-note{grid-column:1/-1}
+@media (max-width:700px){.howto-inline .legend{grid-template-columns:1fr}}
+.path i[data-tip]{cursor:help}
+.tip{position:fixed;z-index:1000;max-width:300px;background:var(--fg);color:var(--bg);border-radius:6px;padding:7px 10px;font:12.5px/1.4 var(--f-body);pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.25);border-left:4px solid var(--tc,var(--fg))}
+.tip b{display:block;font-weight:600}.tip span{display:block;opacity:.85}
 </style>
 
 <div class="wrap">
@@ -463,9 +494,19 @@ dialog::backdrop{background:rgba(10,12,16,.6)}
   <section class="wheel-box" aria-label="Календарь сезона">
     <div class="wheel-bar">
       <span class="hint" id="wheel-hint"></span>
+      <button class="howto-btn" id="howto-btn" aria-expanded="false" aria-controls="howto">Как читать</button>
       <div class="seg" role="group" aria-label="Вид календаря">
         <button id="w-ring" data-wmode="ring" aria-pressed="true">Кольцо года</button>
         <button id="w-line" data-wmode="line" aria-pressed="false">Линия</button>
+      </div>
+    </div>
+    <div class="howto" id="howto" hidden>
+      <div class="howto-cols">
+        <div><h4>Лента сезона</h4><p>Время идёт слева направо: от января года фестивалей до марта года премий. Пять фестивалей проходят в течение года, пять премий — следующей зимой. Нажмите на значок события, чтобы открыть его: постер, победителя, все программы и призы.</p>
+          <p>«Кольцо года» сворачивает ту же ленту в спираль: январь в центре, дальше по кругу, зима сверху, лето снизу. Начало и конец ленты ведут в соседние сезоны.</p></div>
+        <div><h4>Кубики под постером</h4><div id="howto-legend"></div></div>
+        <div><h4>Карточка фильма</h4><p>Нажмите на любой постер — откроется весь путь фильма: где его впервые показали, что он получил на каждом событии и в каких ещё сезонах он встречается.</p>
+          <p>«Фильмы сезона» — все фильмы на одной странице с поиском и сортировкой, «Таблицы» — сравнение призов и премий, в том числе по годам.</p></div>
       </div>
     </div>
     <div class="wheel-main">
@@ -493,8 +534,6 @@ dialog::backdrop{background:rgba(10,12,16,.6)}
   <!--seo:end-->
 
   <footer>
-    <div><h4>Как читать</h4><p>Спираль — время сезона: от января года фестивалей в центре до марта года премий снаружи. Значок события можно оттянуть — пунктир покажет, где оно на ленте.</p>
-      <p>Кубики под постером — десять событий по порядку: слева пять фестивалей, справа пять премий. Серый — фильма там не было, цветной — участие или номинация, с белой точкой — приз или победа.</p></div>
     <div><h4>Откуда данные</h4><p>Награды фестивалей сверены с официальными списками победителей: <a href="https://www.festival-cannes.com" target="_blank" rel="noopener">Канны</a>, <a href="https://www.berlinale.de" target="_blank" rel="noopener">Берлинале</a>, <a href="https://www.labiennale.org/en/cinema" target="_blank" rel="noopener">Венеция</a>, <a href="https://www.sundance.org" target="_blank" rel="noopener">Сандэнс</a>; Торонто — по объявлению TIFF. Призы независимых секций и жюри — Кинопоиск, выборочно сверены с Cineuropa.</p>
       <p>Составы конкурсов и программ — английская Википедия. Премии — Кинопоиск и Википедия, все категории для кино; Critics’ Choice — Boston Globe. Последняя сверка — ноябрь 2026.</p></div>
     <div><h4>Названия и картинки</h4><p>Русские названия — как на Кинопоиске; если русского нет, оставлено оригинальное.</p>
@@ -619,7 +658,7 @@ const mStart=k=>Date.UTC(Y0+Math.floor(k/12),k%12,1);
 const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
 const clamp01=t=>Math.max(0,Math.min(1,t));
 const lerp=(a,b,t)=>a+(b-a)*t;
-let wmode="ring";
+let wmode="line";   // новичкам — линия: она понятнее спирали; выбор посетителя запоминается
 try{ const w=localStorage.getItem("season25-wmode"); if(w==="line"||w==="ring") wmode=w; }catch(e){}
 let wm = wmode==="line"?1:0, wanim=0, G=null;
 const reduceMotion = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -1019,7 +1058,24 @@ function renderOverview(){
         ${poster(f,{ev:e.id})}<span class="p">${esc(prize)}</span><span class="w">${esc(f.ru)}</span></button>`;
     }).join("")}</div></section>`;
 }
-const pathStrip=fid=>`<span class="path">${EVENTS.map(e=>{const l=evLevel(fid,e.id);return `<i class="${l?"l"+l:""}" style="--ec:var(${e.c})" title="${esc(e.name)}"></i>`}).join("")}</span>`;
+/* кубики под постером: 10 событий сезона; у каждого подсказка — что именно было у фильма на этом событии */
+function cubeTip(e, ps){
+  if(!ps.length) return `${e.name}\nфильма здесь не было`;
+  const clean=t=>t.replace(/^(Победа|Номинация): /,"");
+  let head, lines;
+  if(e.kind==="fest"){ head=Math.max(...ps.map(p=>p.lvl))>=2?"приз":"в программе"; lines=ps.map(p=>(p.lvl>=2?"★ ":"")+clean(p.text)); }
+  else { const w=ps.filter(p=>p.lvl>=2), n=ps.filter(p=>p.lvl<2);
+    head=[w.length?plural(w.length,"победа","победы","побед"):"", n.length?plural(n.length,"номинация","номинации","номинаций"):""].filter(Boolean).join(", ");
+    lines=[...w.map(p=>"★ "+clean(p.text)), ...n.map(p=>clean(p.text))]; }
+  if(lines.length>7) lines=[...lines.slice(0,6), `и ещё ${lines.length-6} — в карточке фильма`];
+  return `${e.name} · ${head}\n`+lines.join("\n");
+}
+function stripHTML(fid, events, PX){
+  const parts=events.map(e=>{ const ps=(PX[fid]||[]).filter(p=>p.ev===e.id), l=Math.max(0,...ps.map(p=>p.lvl)); return {e,ps,l}; });
+  const said=parts.filter(x=>x.l).map(x=>x.e.name+(x.l>=2?" — приз или победа":" — участие")).join("; ");
+  return `<span class="path" role="img" aria-label="Путь фильма: ${esc(said||"нет данных")}">${parts.map(({e,ps,l})=>`<i class="${l?"l"+l:""}" style="--ec:var(${e.c})" data-tip="${esc(cubeTip(e,ps))}"></i>`).join("")}</span>`;
+}
+const pathStrip=fid=>stripHTML(fid, EVENTS, PATH);
 function awardCard(a, evId){
   const f=film(a[2]);
   return `<button class="award" data-open="${f.id}"><span class="what">${esc(a[0])}</span>${poster(f,{ev:evId})}${pathStrip(f.id)}
@@ -1117,6 +1173,20 @@ function renderAward(e){
 /* ===================== ФИЛЬМЫ СЕЗОНА ===================== */
 const fstate={filter:"all", sort:"score", q:""};
 function score(fid){ return (PATH[fid]||[]).reduce((s,p)=>s+(p.lvl===3?5:p.lvl===2?3:1),0); }
+/* образец полоски с подписями — для «Как читать» и каталога фильмов */
+function cubesLegend(){
+  const demo={cannes:3,toronto:1,critics:1,globes:2,oscar:3};
+  const cubes=EVENTS.map(e=>`<i class="${demo[e.id]?"l"+demo[e.id]:""}" style="--ec:var(${e.c})" data-tip="${esc(e.name)}"></i>`).join("");
+  return `<div class="legend">
+    <div class="lg-demo"><span class="path big">${cubes}</span><div class="lg-axis"><span>5 фестивалей</span><span>5 премий</span></div></div>
+    <ul class="lg-keys">
+      <li><span class="path big one"><i></i></span>серый — фильма там не было</li>
+      <li><span class="path big one"><i class="l1" style="--ec:var(--e-cannes)"></i></span>цвет события — показ в программе или номинация</li>
+      <li><span class="path big one"><i class="l2" style="--ec:var(--e-cannes)"></i></span>с белой точкой — приз или победа</li>
+    </ul>
+    <p class="lg-note">Кубики идут в порядке сезона: Сандэнс, Берлинале, Канны, Венеция, Торонто, затем Critics’ Choice, «Глобус», BAFTA, Actor Awards, «Оскар». Наведите на кубик — появится, что именно было у фильма. В примере фильм получил приз в Каннах, показан в Торонто, номинирован на Critics’ Choice, победил на «Глобусе» и «Оскаре».</p>
+  </div>`;
+}
 function renderFilms(){
   const ids=Object.keys(PATH), q=fstate.q.trim().toLowerCase();
   let list=ids.filter(fid=>{
@@ -1143,9 +1213,7 @@ function renderFilms(){
       </select>
       <span class="cnt">${list.length} из ${ids.length}</span>
     </div>
-    <div class="plegend"><span>Полоска под постером — 10 событий сезона по порядку:</span>
-      <span><b class="lg0"></b>не был</span><span><b class="lg1"></b>участие или номинация</span>
-      <span><b class="lg2"></b>приз или победа</span><span>цвет — событие</span></div>
+    <details class="howto-inline" open><summary>Как читать кубики под постерами</summary>${cubesLegend()}</details>
     <div class="grid">${list.map(fid=>{const f=film(fid);
       return `<button class="film" data-open="${fid}">${poster(f)}${pathStrip(fid)}
         <span class="t">${esc(f.ru)}</span><span class="d">${esc(f.dir)}</span></button>`}).join("")}</div>
@@ -1228,7 +1296,7 @@ function ttypeBar(){
 /* ===================== ОДНО СОБЫТИЕ ПО ГОДАМ =====================
    Столбцы — сезоны, строки — те же призы и категории, что в таблицах сезона. Кубики под постером — путь фильма в его сезоне. */
 let yev="cannes"; try{ const v=localStorage.getItem("season25-yev"); if(v) yev=v; }catch(e){}
-const stripFor=(fid,ctx)=>`<span class="path">${ctx.S.events.map(e=>{const l=Math.max(0,...(ctx.PATH[fid]||[]).filter(p=>p.ev===e.id).map(p=>p.lvl));return `<i class="${l?"l"+l:""}" style="--ec:var(${e.c})" title="${esc(e.name)}"></i>`}).join("")}</span>`;
+const stripFor=(fid,ctx)=>stripHTML(fid, ctx.S.events, ctx.PATH);
 function winnersFrom(e){
   const out={}; (e.cats||[]).forEach(([cat,list])=>{ const m=TMAP[e.id][cat]; if(!m) return; const [key,nt]=Array.isArray(m)?m:[m,""];
     list.filter(x=>x[2]).forEach(w=>(out[key] ||= []).push({fid:w[0], who:w[1]||"", nt})); });
@@ -1326,7 +1394,7 @@ function otherSeasonsHTML(fid){
 }
 function openFilm(fid){
   const f=film(fid), path=(PATH[fid]||[]).slice().sort((a,b)=>EV[a.ev].i-EV[b.ev].i||b.lvl-a.lvl);
-  document.getElementById("dlg-body").innerHTML=`<div class="card">${poster(f,{lg:true})}
+  document.getElementById("dlg-body").innerHTML=`<div class="dlg-top"><button class="close" id="dlg-close" aria-label="Закрыть">×</button></div><div class="card">${poster(f,{lg:true})}
     <div><h3>${esc(f.ru)}</h3><p class="orig">${esc(f.orig)}${f.en&&f.en!==f.orig?" · "+esc(f.en):""}</p>
       <p style="margin:8px 0 0">${esc(f.dir)}</p>
       <p class="label" style="margin-top:16px">Путь по сезону ${esc(S.title)}</p>
@@ -1334,7 +1402,7 @@ function openFilm(fid){
       <div class="links">${f.kp?`<a href="https://www.kinopoisk.ru/film/${f.kp}/" target="_blank" rel="noopener">Кинопоиск ↗</a>`:`<a href="https://www.kinopoisk.ru/index.php?kp_query=${encodeURIComponent(f.orig)}" target="_blank" rel="noopener">Кинопоиск ↗</a>`}
         <a href="https://letterboxd.com/search/films/${encodeURIComponent(f.en||f.orig)}/" target="_blank" rel="noopener">Letterboxd ↗</a>
         <a id="imdb-link" data-f="${f.id}" href="${imdbHref(f)}" target="_blank" rel="noopener">IMDb ↗</a></div>
-    </div></div><button class="close" id="dlg-close" aria-label="Закрыть">×</button>`;
+    </div></div>`;
   document.getElementById("dlg-close").onclick=()=>dlg.close();
   if(!IMDB[fid]) resolveImdb(fid).then(id=>{ const a=document.getElementById("imdb-link"); if(id && a && a.dataset.f===fid) a.href=imdbHref(film(fid)); });
   paintAll(); paintTrophies();
@@ -1507,11 +1575,26 @@ document.addEventListener("click",e=>{
   const c=e.target.closest("[data-season]"); if(c){ if(dlg.open) dlg.close(); seasonGo(c.dataset.season); return; }
   const a=e.target.closest("[data-season-step]"); if(a){ const k=SEASONS.indexOf(S)+ +a.dataset.seasonStep; if(SEASONS[k]) seasonGo(SEASONS[k].id); }
 });
+/* «Как читать»: при первом визите открыто, дальше — как оставил посетитель */
+const howBtn=document.getElementById("howto-btn"), howBox=document.getElementById("howto");
+function setHowto(open,save){ howBox.hidden=!open; howBtn.setAttribute("aria-expanded",String(open)); if(open) document.getElementById("howto-legend").innerHTML=cubesLegend();
+  if(save) try{ localStorage.setItem("season25-howto",open?"1":"0"); }catch(e){} if(G) layoutWheel(); }
+howBtn.addEventListener("click",()=>setHowto(howBox.hidden,true));
+/* подсказка у кубиков (и у любого элемента с data-tip) */
+const tipEl=document.createElement("div"); tipEl.className="tip"; tipEl.hidden=true; document.body.appendChild(tipEl);
+document.addEventListener("mouseover",e=>{ const t=e.target.closest&&e.target.closest("[data-tip]"); if(!t){ tipEl.hidden=true; return; }
+  const [h,...rest]=t.dataset.tip.split("\n"); tipEl.innerHTML=`<b>${esc(h)}</b>${rest.map(x=>`<span>${esc(x)}</span>`).join("")}`;
+  tipEl.style.setProperty("--tc", getComputedStyle(t).getPropertyValue("--ec")||"var(--fg)"); tipEl.hidden=false;
+  const r=t.getBoundingClientRect(), w=tipEl.offsetWidth, hh=tipEl.offsetHeight;
+  let x=r.left+r.width/2-w/2; x=Math.max(8,Math.min(innerWidth-w-8,x)); let y=r.top-hh-8; if(y<8) y=r.bottom+8;
+  tipEl.style.left=x+"px"; tipEl.style.top=y+"px"; });
+addEventListener("scroll",()=>{ tipEl.hidden=true; },{passive:true});
 document.addEventListener("keydown",e=>{ if(e.key==="Enter"){ const o=e.target.closest&&e.target.closest(".lnk[data-open]"); if(o) openFilm(o.dataset.open); } });
 window.addEventListener("hashchange",()=>{ const h=decodeURIComponent(location.hash.slice(1)); if(SEASONS.some(x=>x.id===h)) switchSeason(h); });
 
 /* ===================== ЗАПУСК ===================== */
 seasonHeader(); buildWheel(); render(); layoutWheel();
+{ let h=null; try{ h=localStorage.getItem("season25-howto"); }catch(e){} setHowto(h==="1" || (h===null && innerWidth>=900), false); }   // на телефоне панель длинная — по умолчанию закрыта
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(layoutWheel);
 loadPosters();
 </script>
