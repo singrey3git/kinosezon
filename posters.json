@@ -4351,12 +4351,12 @@
    "tmdb": 1188042
   },
   "x24_mother": {
-   "poster": null,
-   "imdb": null,
-   "tmdb": null
+   "poster": "https://image.tmdb.org/t/p/w500/vgaUZQKwRghNmEVxeFsThGDu38n.jpg",
+   "imdb": "tt14778372",
+   "tmdb": 1248644
   },
   "x24_hip": {
-   "poster": null,
+   "poster": "https://image.tmdb.org/t/p/w500/xWlQDwZLdC1qZZJSf66YWCAt7Fv.jpg",
    "imdb": "tt33312360",
    "tmdb": null
   },
@@ -4674,11 +4674,6 @@
    "poster": "https://image.tmdb.org/t/p/w500/65GC53GgURtzYQOMD3HOcWZB5Bk.jpg",
    "imdb": "tt27766440",
    "tmdb": 1127625
-  },
-  "t24_sunshine": {
-   "poster": "https://image.tmdb.org/t/p/w500/tVdci4ivmHsXW7MjEcJy5MeLEUC.jpg",
-   "imdb": "tt31711171",
-   "tmdb": 1269838
   },
   "t24_theswedishtorp": {
    "poster": "https://image.tmdb.org/t/p/w500/nhuPYq6jWlSvbaOLls0RFmXxKw4.jpg",
@@ -5204,11 +5199,6 @@
    "poster": "https://image.tmdb.org/t/p/w500/tqbS2vmNCbTPX2CXFJxxMsomAlM.jpg",
    "imdb": "tt4627382",
    "tmdb": 1242419
-  },
-  "g_shes": {
-   "poster": "https://image.tmdb.org/t/p/w500/hB89LNbr3OkoZ085h8JocFFXufE.jpg",
-   "imdb": "tt5562068",
-   "tmdb": 1139695
   },
   "g_pal": {
    "poster": "https://image.tmdb.org/t/p/w500/hHWSjo6DYDAEUDfA7JXCS4nhjmT.jpg",
@@ -7861,9 +7851,9 @@
    "tmdb": 1477963
   },
   "bs_sol": {
-   "poster": null,
-   "imdb": null,
-   "tmdb": null
+   "poster": "https://image.tmdb.org/t/p/w500/txDRskrBkl4qeOklnNTSg09e5f1.jpg",
+   "imdb": "tt36152000",
+   "tmdb": 1450956
   },
   "s26_tellme": {
    "poster": "https://image.tmdb.org/t/p/w500/jfKj1kewqTsPA3XUCO00ftWBjrU.jpg",
@@ -8214,11 +8204,6 @@
    "poster": "https://image.tmdb.org/t/p/w500/ghBc5iOJxDcEHPi7OvQYdVXiGeF.jpg",
    "imdb": "tt0387564",
    "tmdb": 176
-  },
-  "b26_thetestamentof": {
-   "poster": "https://image.tmdb.org/t/p/w500/3bNJ6h5AditBOTGrjF9T1OhAPXn.jpg",
-   "imdb": "tt34819091",
-   "tmdb": 1401281
   },
   "b26_heysel85": {
    "poster": "https://image.tmdb.org/t/p/w500/hTEN2A1Kw8hH8CuaGXIUPcSzv9V.jpg",
@@ -8604,11 +8589,6 @@
    "poster": "https://image.tmdb.org/t/p/w500/dxMSXJFrwaCZ0Rkp0V79ZEfibV7.jpg",
    "imdb": "tt39383353",
    "tmdb": 1616876
-  },
-  "b26_ghostschool": {
-   "poster": "https://image.tmdb.org/t/p/w500/d36eqygq3ReUBgS2ytmjrho26OH.jpg",
-   "imdb": "tt37547768",
-   "tmdb": 1516456
   },
   "b26_eenymeenyminym": {
    "poster": "https://image.tmdb.org/t/p/w500/qGt4SzKmiovInk4oYSH1F1jR6Jn.jpg",
@@ -10190,11 +10170,6 @@
    "imdb": "tt39304840",
    "tmdb": 1632659
   },
-  "t26_ironboy": {
-   "poster": "https://image.tmdb.org/t/p/w500/7RN7uox5vLnMY3GAXKjjGHTkeXR.jpg",
-   "imdb": "tt36639956",
-   "tmdb": 947493
-  },
   "t26_lautre": {
    "poster": "https://image.tmdb.org/t/p/w500/7zy3GMIvxSzB2sfSLuRhIhEcJ3T.jpg",
    "imdb": "tt43106511",
@@ -10214,11 +10189,6 @@
    "poster": null,
    "imdb": null,
    "tmdb": null
-  },
-  "t26_soumsoumthenig": {
-   "poster": "https://image.tmdb.org/t/p/w500/vHSXd1UZIRoTV3OKMb4XObcgymU.jpg",
-   "imdb": "tt39075020",
-   "tmdb": 1376457
   },
   "t26_ourloves": {
    "poster": "https://image.tmdb.org/t/p/w500/6MebG6HWV4RKGZUa7wgJzfiku0P.jpg",
@@ -10495,11 +10465,6 @@
    "imdb": "tt38126586",
    "tmdb": 1541330
   },
-  "t26_thespiral": {
-   "poster": "https://image.tmdb.org/t/p/w500/6GisyPsQBvnpgMKXqtPuwJqpZzl.jpg",
-   "imdb": "tt23411728",
-   "tmdb": 1412795
-  },
   "t26_nobodysviolenc": {
    "poster": "https://image.tmdb.org/t/p/w500/3APO2ls48cLlwqy3XGFLcL81i4v.jpg",
    "imdb": "tt38512625",
@@ -10549,8 +10514,63 @@
    "poster": "https://image.tmdb.org/t/p/w500/f7L9ZWZkkYuJ1XFGihGnE8eJxoZ.jpg",
    "imdb": "tt40386615",
    "tmdb": 1608727
+  },
+  "c24_chaos": {
+   "poster": "https://image.tmdb.org/t/p/w500/cW36tlVDljT1lpHZrnJDjYsMdo4.jpg",
+   "imdb": "tt28520484",
+   "tmdb": 1158467
+  },
+  "c24_outthewindow": {
+   "poster": "https://image.tmdb.org/t/p/w500/lYqlyZKaPTK02oQYkGTXJpGuGQk.jpg",
+   "imdb": "tt32205836",
+   "tmdb": 1126866
+  },
+  "c24_sunflowers": {
+   "poster": "https://image.tmdb.org/t/p/w500/znYnNTzX3XL8gg0WpKkICLT003A.jpg",
+   "imdb": "tt28493138",
+   "tmdb": 1156699
+  },
+  "c24_bunnyhood": {
+   "poster": "https://image.tmdb.org/t/p/w500/1DtpEkTTuq4zYmcl9SrsRuIxbut.jpg",
+   "imdb": "tt31548153",
+   "tmdb": 1244933
+  },
+  "t26_almostpink": {
+   "poster": "https://image.tmdb.org/t/p/w500/mWJBGFGO5d46ZMzXGBi7FQG9R1b.jpg",
+   "imdb": null,
+   "tmdb": 1703823
+  },
+  "t26_prisca": {
+   "poster": "https://image.tmdb.org/t/p/w500/ijbWh3a2tLzxga68Az9wdVU9AQs.jpg",
+   "imdb": "tt43748763",
+   "tmdb": 1744317
+  },
+  "c26_lasergato": {
+   "poster": "https://image.tmdb.org/t/p/w500/iD1kb7tPklwdatXDd9ZVmCAknT5.jpg",
+   "imdb": "tt42006686",
+   "tmdb": 1678782
+  },
+  "t26_terminal": {
+   "poster": "https://image.tmdb.org/t/p/w500/2YDCi3UWrtDmYhDre916biJsfoH.jpg",
+   "imdb": "tt43723667",
+   "tmdb": 1729977
+  },
+  "c26_silentvoices": {
+   "poster": "https://image.tmdb.org/t/p/w500/vBeIo2w9pQzMUVxscUVX4v6Kz66.jpg",
+   "imdb": "tt42029134",
+   "tmdb": 1596928
+  },
+  "c26_growingstones": {
+   "poster": "https://image.tmdb.org/t/p/w500/pFXv3WGflLR2rA5xx7LLWPHfHA5.jpg",
+   "imdb": "tt42006872",
+   "tmdb": 1678780
+  },
+  "c26_nevernough": {
+   "poster": "https://image.tmdb.org/t/p/w500/2p3YPjVZB6axNCLPZZ77o7IZjPc.jpg",
+   "imdb": null,
+   "tmdb": 1678785
   }
  },
- "generated": "2026-10-28T04:13:27.568Z",
+ "generated": "2026-11-02T01:01:45.856Z",
  "source": "TMDB (постеры), Викиданные (номера IMDb)"
 }
