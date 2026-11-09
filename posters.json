@@ -7981,9 +7981,9 @@
    "tmdb": 1596296
   },
   "s26_troublemaker": {
-   "poster": null,
-   "imdb": null,
-   "tmdb": null
+   "poster": "https://image.tmdb.org/t/p/w500/moa2m8C34bZjciLuMyd7IsUUUkd.jpg",
+   "imdb": "tt31517264",
+   "tmdb": 1243747
   },
   "s26_timewater": {
    "poster": "https://image.tmdb.org/t/p/w500/1hksIYHtsHCG70nZKbnrYBPk600.jpg",
@@ -10416,7 +10416,7 @@
    "tmdb": 1753410
   },
   "t26_cheyenne": {
-   "poster": null,
+   "poster": "https://image.tmdb.org/t/p/w500/nDBK2OtqiCVoaRFOJgCK9RSAMMs.jpg",
    "imdb": "tt43747887",
    "tmdb": 1744054
   },
@@ -10571,6 +10571,6 @@
    "tmdb": 1678785
   }
  },
- "generated": "2026-11-02T13:29:53.385Z",
+ "generated": "2026-11-09T13:54:08.064Z",
  "source": "TMDB (постеры), Викиданные (номера IMDb)"
 }
