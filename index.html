@@ -264,7 +264,7 @@ details.prog .shelf{padding:4px 14px 16px}
 .tcard .nt{font:10.5px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 .tcard .aw{font:600 10.5px/1.3 var(--f-mono);color:var(--gold-text)}
 .ptable td.score .sc2{display:block;font:600 16px var(--f-display);color:var(--muted);margin-top:4px}
-.fbar .seg{margin-right:6px}
+.fbar .seg{margin-right:0}
 .ptable td.score{font:600 22px var(--f-display);vertical-align:middle;text-align:center;min-width:96px}
 .ptable td.score small{display:block;font:11px var(--f-mono);color:var(--muted)}
 
@@ -295,6 +295,13 @@ footer h4{margin:0 0 6px;font:600 12px var(--f-mono);letter-spacing:.12em;text-t
 footer p{margin:0 0 8px}
 @media (max-width:760px){footer{grid-template-columns:1fr}}
 .season-sw{display:flex;align-items:center;flex-wrap:wrap;gap:6px 18px}
+/* все переключатели — справа: сезон и режим в одной колонке, в барах — у правого края */
+.top-ctl{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;align-self:stretch;gap:12px;padding-top:22px}
+@media (max-width:760px){.top-ctl{align-items:flex-start;padding-top:0}.fbar>.seg{order:-1;margin-left:0}.fbar .fbar-l{flex:1 1 100%}.fbar .fbar-r{margin-left:0;justify-content:flex-start}}
+.fbar-l{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex:1 1 0;min-width:0}
+.fbar-r{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;margin-left:auto}
+.fbar>.seg{flex:none;align-self:flex-start;margin-left:auto}
+.fbar .cnt.l{margin-left:0}
 .ss-nav{display:inline-flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px}
 .ss-arr{border:0;background:none;width:30px;height:30px;border-radius:50%;font:600 18px/1 var(--f-body);cursor:pointer;color:var(--fg)}
 .ss-arr:hover:not(:disabled){background:var(--bg)}.ss-arr:disabled{opacity:.3;cursor:default}
@@ -493,15 +500,17 @@ dialog::backdrop{background:rgba(10,12,16,.6)}
 <div class="wrap">
   <div class="top">
     <div>
-      <div class="season-sw"><h1><span class="kicker">Мировой киносезон</span><span id="season-title"></span></h1>
-        <div class="ss-nav" role="group" aria-label="Сезон"><button class="ss-arr" data-season-step="-1" aria-label="Предыдущий сезон">‹</button><span id="season-chips"></span><button class="ss-arr" data-season-step="1" aria-label="Следующий сезон">›</button></div></div>
+      <div class="season-sw"><h1><span class="kicker">Мировой киносезон</span><span id="season-title"></span></h1></div>
       <p class="slogan">Пять фестивалей. Пять премий. Сотни историй.</p>
       <p class="lede">Проследите путь фильмов от первых фестивальных показов до главных кинопремий.</p>
     </div>
-    <div class="seg" role="group" aria-label="Режим">
-      <button id="m-events" data-mode="events" aria-pressed="true">События</button>
-      <button id="m-films" data-mode="films" aria-pressed="false">Фильмы сезона</button>
-      <button id="m-table" data-mode="table" aria-pressed="false">Таблицы</button>
+    <div class="top-ctl">
+      <div class="ss-nav" role="group" aria-label="Сезон"><button class="ss-arr" data-season-step="-1" aria-label="Предыдущий сезон">‹</button><span id="season-chips"></span><button class="ss-arr" data-season-step="1" aria-label="Следующий сезон">›</button></div>
+      <div class="seg" role="group" aria-label="Режим">
+        <button id="m-films" data-mode="films" aria-pressed="false">Фильмы сезона</button>
+        <button id="m-events" data-mode="events" aria-pressed="true">События</button>
+        <button id="m-table" data-mode="table" aria-pressed="false">Таблицы</button>
+      </div>
     </div>
   </div>
 
@@ -1211,16 +1220,18 @@ function renderFilms(){
   list.sort(by);
   return `<section class="event">
     <div class="fbar">
+      <input id="fq" type="search" placeholder="Название или режиссёр" value="${esc(fstate.q)}" aria-label="Поиск">
+      <span class="cnt l">${list.length} из ${ids.length}</span>
+      <div class="fbar-r">
       <button class="chip" data-ff="all" aria-pressed="${fstate.filter==="all"}">Все фильмы</button>
       <button class="chip" data-ff="both" aria-pressed="${fstate.filter==="both"}">Фестиваль → премия</button>
       <button class="chip" data-ff="won" aria-pressed="${fstate.filter==="won"}">С наградами</button>
-      <input id="fq" type="search" placeholder="Название или режиссёр" value="${esc(fstate.q)}" aria-label="Поиск">
       <select id="fs" aria-label="Сортировка">
         <option value="score"${fstate.sort==="score"?" selected":""}>Больше наград — выше</option>
         <option value="first"${fstate.sort==="first"?" selected":""}>По первому показу</option>
         <option value="title"${fstate.sort==="title"?" selected":""}>По названию</option>
       </select>
-      <span class="cnt">${list.length} из ${ids.length}</span>
+      </div>
     </div>
     <details class="howto-inline"><summary>Как читать кубики под постерами</summary>${cubesLegend()}</details>
     <div class="grid">${list.map(fid=>{const f=film(fid);
@@ -1283,7 +1294,7 @@ function renderTable(){
   const rows=groups.map(g=>{ const cols=g[2].filter(([key])=>prem.some(e=>Ws[e.id][key]||(key==="orig"||key==="adapt")&&Ws[e.id].script));
     return `<tr class="grp"><th colspan="${prem.length+1}"><span>${esc(g[1])}</span></th></tr>`+cols.map(row).join(""); }).join("");
   return `<section class="event">
-    <div class="fbar">${ttypeBar()}${[["all","Все категории"],...TGROUPS.map(g=>[g[0],g[1]])].map(([k,n])=>`<button class="chip" data-tg="${k}" aria-pressed="${tgroup===k}">${esc(n)}</button>`).join("")}</div>
+    <div class="fbar"><div class="fbar-l">${[["all","Все категории"],...TGROUPS.map(g=>[g[0],g[1]])].map(([k,n])=>`<button class="chip" data-tg="${k}" aria-pressed="${tgroup===k}">${esc(n)}</button>`).join("")}</div>${ttypeBar()}</div>
     ${prem.some(isSoon)?`<p class="tbl-note"><b>Премии этого сезона ещё впереди</b> — в клетках даты, когда станут известны победители (и когда объявят номинантов).</p>`:""}
     <p class="tbl-note">Победители всех кинокатегорий пяти премий сезона. У премий разный набор категорий, поэтому в части клеток стоит «нет категории». У «Золотого глобуса» по два победителя в категориях фильма и главных ролей (драма и комедия), а сценарий — одна общая категория. У Actor Awards в строке «Лучший фильм» — приз за актёрский ансамбль. Полоска под постером — путь фильма по десяти событиям сезона.</p>
     <div class="tbl-wrap"><table class="ptable">
@@ -1335,7 +1346,7 @@ function renderYearTable(){
   }
   const rows=groups.map(g=>`<tr class="grp"><th colspan="${cols.length+1}"><span>${esc(g.n)}</span></th></tr>`+g.rows.map(([name,tds])=>`<tr><th class="rowh" scope="row">${esc(name)}</th>${tds.map((t,i)=>t.replace(/^<td(?: class="([^"]*)")?/,(m,cl)=>`<td class="${cl?cl+" ":""}pal-${cols[i].x.id}"`)).join("")}</tr>`).join("")).join("");
   return `<section class="event">
-    <div class="fbar">${ttypeBar()}${EVENTS.map((e,i)=>`${i&&e.kind!==EVENTS[i-1].kind?`<span class="chip-sep" aria-hidden="true"></span>`:""}<button class="chip" data-yev="${e.id}" aria-pressed="${yev===e.id}">${esc(e.name)}</button>`).join("")}</div>
+    <div class="fbar"><div class="fbar-l">${EVENTS.map((e,i)=>`${i&&e.kind!==EVENTS[i-1].kind?`<span class="chip-sep" aria-hidden="true"></span>`:""}<button class="chip" data-yev="${e.id}" aria-pressed="${yev===e.id}">${esc(e.name)}</button>`).join("")}</div>${ttypeBar()}</div>
     <p class="tbl-note">Одно событие в разные годы: столбцы — сезоны, строки — сопоставимые призы${kind==="award"?" и категории":""}. Полоска под постером — путь фильма в его собственном сезоне.</p>
     <div class="tbl-wrap"><table class="ptable">
       <thead><tr><th class="rowh corner">${kind==="fest"?"Приз":"Номинация"}</th>${cols.map(c=>`<th class="ph pal-${c.x.id}${c.x===S?" cur":""}" style="--ec:var(${c.e.c})"><div class="phin">${trophyHTML(yev)}<div><b>${esc(c.e.name)} ${esc(c.year)}</b><span>сезон ${esc(c.x.title)}${c.x===S?" · текущий":""}</span></div></div></th>`).join("")}</tr></thead>
@@ -1351,7 +1362,7 @@ function renderFestTable(){
       const ws=cells[e.id]; if(!ws) return `<td class="empty">нет приза</td>`;
       return `<td><div class="tcell">${ws.map(card).join("")}</div></td>`; }).join("")}</tr>`).join("")).join("");
   return `<section class="event">
-    <div class="fbar">${ttypeBar()}${[["all","Все призы"],...FT.map(g=>[g[0],g[1]])].map(([k,n])=>`<button class="chip" data-fg="${k}" aria-pressed="${fgroup===k}">${esc(n)}</button>`).join("")}</div>
+    <div class="fbar"><div class="fbar-l">${[["all","Все призы"],...FT.map(g=>[g[0],g[1]])].map(([k,n])=>`<button class="chip" data-fg="${k}" aria-pressed="${fgroup===k}">${esc(n)}</button>`).join("")}</div>${ttypeBar()}</div>
     <p class="tbl-note">Сопоставимые призы пяти фестивалей. Названия наград у фестивалей разные, поэтому под постером указано, как приз называется именно там. У Торонто почти нет жюри: главные награды выбирают зрители. Полоска под постером — путь фильма по десяти событиям сезона.</p>
     <div class="tbl-wrap"><table class="ptable">
       <thead><tr><th class="rowh corner">Приз</th>${fests.map(e=>`<th class="ph" style="--ec:var(${e.c})"><div class="phin">${trophyHTML(e.id)}<div><b>${esc(e.name)}</b><span>${esc(span(e))}</span></div></div></th>`).join("")}</tr></thead>
