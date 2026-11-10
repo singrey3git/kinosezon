@@ -313,6 +313,26 @@ footer p{margin:0 0 8px}
 /* карточка фильма */
 dialog{border:0;padding:0;border-radius:10px;background:var(--surface);color:var(--fg);width:min(760px,calc(100vw - 32px));max-height:calc(100dvh - 40px);box-shadow:0 20px 60px rgba(0,0,0,.35)}
 dialog::backdrop{background:rgba(10,12,16,.6)}
+/* отзыв: кнопка в правом нижнем углу и короткая форма */
+.fb-btn{position:fixed;right:18px;bottom:18px;z-index:40;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:9px 14px;border-radius:999px;font:500 13px var(--f-body);cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.12);transition:background .2s,color .2s,border-color .2s,transform .2s}
+.fb-btn::before{content:"";width:14px;height:14px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linejoin='round'%3E%3Cpath d='M4 5h16v11H9l-5 4z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linejoin='round'%3E%3Cpath d='M4 5h16v11H9l-5 4z'/%3E%3C/svg%3E") center/contain no-repeat}
+.fb-btn:hover,.fb-btn:focus-visible{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-1px)}
+@media (max-width:560px){.fb-btn{right:12px;bottom:12px;padding:8px 12px}}
+dialog.fb{width:min(520px,calc(100vw - 32px))}
+.fb-form{padding:22px 22px 20px;display:grid;gap:12px}
+.fb-form h3{margin:0;font:600 20px/1.2 var(--f-display);text-transform:uppercase}
+.fb-form p{margin:0;color:var(--muted);font-size:14px;line-height:1.45}
+.fb-form label{display:grid;gap:5px;font:600 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.fb-form textarea,.fb-form input[type=email]{font:15px/1.45 var(--f-body);padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);text-transform:none;letter-spacing:0;resize:vertical}
+.fb-form textarea:focus,.fb-form input:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
+.fb-form .row{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap}
+.fb-form .st{margin-right:auto;font-size:13px;color:var(--muted)}
+.fb-form .st.err{color:#c0392b}
+.fb-form button[type=submit]{border:0;background:var(--fg);color:var(--bg);padding:9px 18px;border-radius:999px;font:600 14px var(--f-body);cursor:pointer}
+.fb-form button[type=submit]:disabled{opacity:.5;cursor:default}
+.fb-form .hp{position:absolute;left:-9999px}
+.fb-done{padding:34px 22px 28px;text-align:center}.fb-done h3{margin:0 0 6px;font:600 20px var(--f-display);text-transform:uppercase}.fb-done p{margin:0;color:var(--muted)}
+
 .card{display:grid;grid-template-columns:200px minmax(0,1fr);gap:20px;padding:20px}
 .card h3{font:700 30px/1.02 var(--f-display);text-transform:uppercase;margin:0 0 4px}
 .card .orig{color:var(--muted);margin:0}
@@ -565,6 +585,18 @@ dialog::backdrop{background:rgba(10,12,16,.6)}
   </footer>
 </div>
 
+<button class="fb-btn" id="fb-btn" type="button">Оставить отзыв</button>
+<dialog id="fb" class="fb" aria-labelledby="fb-h"><div style="position:relative">
+  <div class="dlg-top"><button class="close" id="fb-close" aria-label="Закрыть" type="button">×</button></div>
+  <form class="fb-form" id="fb-form">
+    <h3 id="fb-h">Отзыв о сайте</h3>
+    <p>Что понравилось, что неудобно, чего не хватает, где ошибка в данных. Сообщение придёт автору сайта.</p>
+    <label>Сообщение<textarea name="message" rows="6" required maxlength="4000" placeholder="Например: хочется видеть ещё фестиваль в Роттердаме"></textarea></label>
+    <label>Почта — если хотите получить ответ<input type="email" name="email" placeholder="необязательно" autocomplete="email"></label>
+    <input class="hp" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="row"><span class="st" id="fb-st" role="status"></span><button type="submit">Отправить</button></div>
+  </form>
+</div></dialog>
 <dialog id="dlg" aria-label="Карточка фильма"><div style="position:relative" id="dlg-body"></div></dialog>
 
 <script>const SEASONS=[];</script>
@@ -1615,4 +1647,40 @@ seasonHeader(); buildWheel(); render(); layoutWheel();
 { let h=null; try{ h=localStorage.getItem("season25-howto"); }catch(e){} setHowto(h==="1", false); if(h===null) howBtn.classList.add("beacon"); }   // по умолчанию скрыто; кто ни разу не открывал — кнопка мягко пульсирует
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(layoutWheel);
 loadPosters();
+
+/* ===================== ОТЗЫВ =====================
+   Сообщения уходят через Web3Forms (web3forms.com) на почту автора. Ключ публичный по устройству сервиса:
+   он только разрешает отправку на привязанный к нему адрес. */
+const FEEDBACK_KEY="";
+(function(){
+  const dlg=document.getElementById("fb"), form=document.getElementById("fb-form"), st=document.getElementById("fb-st");
+  const open=()=>{ if(dlg.showModal) dlg.showModal(); else dlg.setAttribute("open",""); setTimeout(()=>form.message&&form.message.focus(),30); };
+  const close=()=>{ dlg.close?dlg.close():dlg.removeAttribute("open"); };
+  const fbBtn=document.getElementById("fb-btn");
+  if(!FEEDBACK_KEY){ fbBtn.hidden=true; return; }   // кнопка появится, когда будет ключ
+  fbBtn.addEventListener("click",open);
+  document.getElementById("fb-close").addEventListener("click",close);
+  dlg.addEventListener("click",e=>{ if(e.target===dlg) close(); });
+  form.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const btn=form.querySelector("button[type=submit]"), msg=form.message.value.trim();
+    if(!msg) return;
+    if(form.botcheck.checked){ close(); return; }
+    btn.disabled=true; st.className="st"; st.textContent="Отправляю…";
+    const where=[document.title, location.hash||""].join(" ").trim();
+    try{
+      if(!FEEDBACK_KEY) throw new Error("nokey");
+      const r=await fetch("https://api.web3forms.com/submit",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},
+        body:JSON.stringify({access_key:FEEDBACK_KEY,subject:"Отзыв с kinosezon.org",from_name:"Мировой киносезон",message:msg,
+          email:form.email.value.trim()||undefined,replyto:form.email.value.trim()||undefined,page:where,screen:innerWidth+"×"+innerHeight})});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||j.success===false) throw new Error(j.message||r.status);
+      form.parentElement.insertAdjacentHTML("beforeend",`<div class="fb-done"><h3>Спасибо!</h3><p>Сообщение отправлено.</p></div>`);
+      form.hidden=true; form.reset();
+      setTimeout(()=>{ close(); form.hidden=false; const d=dlg.querySelector(".fb-done"); d&&d.remove(); st.textContent=""; },2200);
+    }catch(err){
+      st.className="st err"; st.textContent="Не получилось отправить. Попробуйте ещё раз чуть позже.";
+    }finally{ btn.disabled=false; }
+  });
+})();
 </script>
