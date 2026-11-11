@@ -251,6 +251,18 @@ details.prog .shelf{padding:4px 14px 16px}
 .phin span:not(.logo){display:block;font:11px var(--f-mono);color:var(--muted);font-weight:400}
 
 .ptable tbody tr:last-child th,.ptable tbody tr:last-child td{border-bottom:0}
+/* плавающая шапка таблицы: появляется сверху окна, когда настоящая уехала вверх; таблица остаётся в общей прокрутке страницы */
+.thf{position:fixed;top:0;z-index:30;overflow:hidden;pointer-events:none;opacity:0;transform:translateY(-6px);transition:opacity .18s,transform .18s;
+  background:color-mix(in srgb,var(--surface) 78%,transparent);-webkit-backdrop-filter:blur(10px) saturate(1.2);backdrop-filter:blur(10px) saturate(1.2);
+  border:1px solid var(--line);border-top:0;border-radius:0 0 8px 8px;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.thf.on{opacity:1;transform:none}
+.thf table{border-collapse:separate;border-spacing:0;table-layout:fixed}
+.thf .ptable thead th{background:transparent}
+.thf .ptable thead th.corner{position:relative;z-index:2;background:var(--surface)}
+.thf .ptable thead th{padding-top:7px;padding-bottom:7px;border-bottom:0}
+.thf .phin .trophy{display:none}
+.thf .phin{justify-content:center}.thf .phin b{margin-top:0}
+
 .ptable .rowh{position:sticky;left:0;z-index:2;background:var(--surface);min-width:120px;max-width:150px;box-shadow:1px 0 0 var(--line);font:600 14px/1.15 var(--f-display);text-transform:uppercase;text-align:left;vertical-align:middle}
 .ptable .scorerow .rowh,.ptable .scorerow td{border-top:2px solid var(--fg)}
 .ptable tr.grp th{background:var(--bg);padding:8px 10px;text-align:left;border-right:0}
@@ -1650,6 +1662,32 @@ seasonHeader(); buildWheel(); render(); layoutWheel();
 { let h=null; try{ h=localStorage.getItem("season25-howto"); }catch(e){} setHowto(h==="1", false); if(h===null) howBtn.classList.add("beacon"); }   // по умолчанию скрыто; кто ни разу не открывал — кнопка мягко пульсирует
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(layoutWheel);
 loadPosters();
+
+
+/* ===================== ПЛАВАЮЩАЯ ШАПКА ТАБЛИЦ ===================== */
+function floatHeads(){
+  document.querySelectorAll(".thf").forEach(x=>x.remove());
+  document.querySelectorAll(".tbl-wrap").forEach(wrap=>{
+    const table=wrap.querySelector("table"), thead=table&&table.tHead; if(!thead) return;
+    const box=document.createElement("div"); box.className="thf"; box.setAttribute("aria-hidden","true");
+    const t=document.createElement("table"); t.className=table.className; t.appendChild(thead.cloneNode(true)); box.appendChild(t);
+    document.body.appendChild(box);
+    const src=[...thead.rows[0].cells], dst=[...t.tHead.rows[0].cells];
+    const size=()=>{ const r=wrap.getBoundingClientRect(); box.style.left=r.left+"px"; box.style.width=r.width+"px";
+      t.style.width=table.getBoundingClientRect().width+"px";
+      src.forEach((c,i)=>{ const w=c.getBoundingClientRect().width+"px"; dst[i].style.width=w; dst[i].style.minWidth=w; dst[i].style.maxWidth=w; }); };
+    const place=()=>{ if(!box.isConnected) return;
+      const r=wrap.getBoundingClientRect(), hh=thead.getBoundingClientRect().height;
+      box.classList.toggle("on", r.top+hh<0 && r.bottom>hh*2);
+      t.style.transform=`translateX(${-wrap.scrollLeft}px)`; dst[0].style.left=wrap.scrollLeft+"px"; };
+    size(); place();
+    wrap.addEventListener("scroll",place,{passive:true});
+    box._place=place; box._size=size;
+  });
+}
+addEventListener("scroll",()=>document.querySelectorAll(".thf").forEach(b=>b._place&&b._place()),{passive:true});
+addEventListener("resize",()=>document.querySelectorAll(".thf").forEach(b=>{b._size();b._place();}));
+{ const _render=render; render=function(){ _render.apply(this,arguments); floatHeads(); }; }
 
 /* ===================== ОТЗЫВ =====================
    Сообщения уходят через Web3Forms (web3forms.com) на почту автора. Ключ публичный по устройству сервиса:
