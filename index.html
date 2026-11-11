@@ -1651,7 +1651,7 @@ loadPosters();
 /* ===================== ОТЗЫВ =====================
    Сообщения уходят через Web3Forms (web3forms.com) на почту автора. Ключ публичный по устройству сервиса:
    он только разрешает отправку на привязанный к нему адрес. */
-const FEEDBACK_KEY="";
+const FEEDBACK_KEY="6acf105c-1d5b-4312-895e-fec1c92f84a8";
 (function(){
   const dlg=document.getElementById("fb"), form=document.getElementById("fb-form"), st=document.getElementById("fb-st");
   const open=()=>{ if(dlg.showModal) dlg.showModal(); else dlg.setAttribute("open",""); setTimeout(()=>form.message&&form.message.focus(),30); };
