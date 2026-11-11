@@ -1452,11 +1452,11 @@ function openFilm(fid){
   document.getElementById("dlg-body").innerHTML=`<div class="dlg-top"><button class="close" id="dlg-close" aria-label="Закрыть">×</button></div><div class="card">${poster(f,{lg:true})}
     <div><h3>${esc(f.ru)}</h3><p class="orig">${esc(f.orig)}${f.en&&f.en!==f.orig?" · "+esc(f.en):""}</p>
       <p style="margin:8px 0 0">${esc(f.dir)}</p>
-      <p class="label" style="margin-top:16px">Путь по сезону ${esc(S.title)}</p>
-      ${tripHTML(path,EV)}${otherSeasonsHTML(fid)}
       <div class="links">${f.kp?`<a href="https://www.kinopoisk.ru/film/${f.kp}/" target="_blank" rel="noopener">Кинопоиск ↗</a>`:`<a href="https://www.kinopoisk.ru/index.php?kp_query=${encodeURIComponent(f.orig)}" target="_blank" rel="noopener">Кинопоиск ↗</a>`}
         <a href="https://letterboxd.com/search/films/${encodeURIComponent(f.en||f.orig)}/" target="_blank" rel="noopener">Letterboxd ↗</a>
         <a id="imdb-link" data-f="${f.id}" href="${imdbHref(f)}" target="_blank" rel="noopener">IMDb ↗</a></div>
+      <p class="label" style="margin-top:16px">Путь по сезону ${esc(S.title)}</p>
+      ${tripHTML(path,EV)}${otherSeasonsHTML(fid)}
     </div></div>`;
   document.getElementById("dlg-close").onclick=()=>dlg.close();
   if(!IMDB[fid]) resolveImdb(fid).then(id=>{ const a=document.getElementById("imdb-link"); if(id && a && a.dataset.f===fid) a.href=imdbHref(film(fid)); });
