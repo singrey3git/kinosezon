@@ -12,6 +12,19 @@
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- Yandex.Metrika counter: только на kinosezon.org, не в локальных копиях и превью -->
+<script type="text/javascript">
+  if (/(^|\.)kinosezon\.org$/.test(location.hostname)) {
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=114178241', 'ym');
+    ym(114178241, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+  }
+</script>
+<!-- /Yandex.Metrika counter -->
 <meta name="theme-color" content="#171b21">
 <meta name="google-site-verification" content="rFNDxpE6IWLG4Y-aFavrZwnYyQ-9Ldxxel5hqJjDOoI">
 <meta name="yandex-verification" content="b40a3352082a970b">
@@ -600,6 +613,7 @@ dialog.fb{width:min(520px,calc(100vw - 32px))}
   </footer>
 </div>
 
+<noscript><div><img src="https://mc.yandex.ru/watch/114178241" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <button class="fb-btn" id="fb-btn" type="button">Оставить отзыв</button>
 <dialog id="fb" class="fb" aria-labelledby="fb-h"><div style="position:relative">
   <div class="dlg-top"><button class="close" id="fb-close" aria-label="Закрыть" type="button">×</button></div>
@@ -1664,6 +1678,15 @@ if(document.fonts && document.fonts.ready) document.fonts.ready.then(layoutWheel
 loadPosters();
 
 
+/* ===================== ЦЕЛИ МЕТРИКИ ===================== */
+function goal(name, params){ try{ if(window.ym) ym(114178241,"reachGoal",name,params||{}); }catch(e){} }
+{ const _openFilm=openFilm; openFilm=function(fid){ _openFilm.apply(this,arguments); goal("film_open",{film:fid,season:S.id}); }; }
+document.addEventListener("click",e=>{
+  const a=e.target.closest("#dlg-body .links a"); if(a){ const h=a.href; goal(h.includes("kinopoisk")?"out_kinopoisk":h.includes("letterboxd")?"out_letterboxd":"out_imdb"); }
+  const m=e.target.closest("[data-mode]"); if(m) goal("mode_"+m.dataset.mode);
+  const ss=e.target.closest("[data-season]"); if(ss) goal("season_switch",{season:ss.dataset.season});
+},true);
+
 /* ===================== ПЛАВАЮЩАЯ ШАПКА ТАБЛИЦ ===================== */
 function floatHeads(){
   document.querySelectorAll(".thf").forEach(x=>x.remove());
@@ -1717,7 +1740,7 @@ const FEEDBACK_KEY="6acf105c-1d5b-4312-895e-fec1c92f84a8";
       const j=await r.json().catch(()=>({}));
       if(!r.ok||j.success===false) throw new Error(j.message||r.status);
       form.parentElement.insertAdjacentHTML("beforeend",`<div class="fb-done"><h3>Спасибо!</h3><p>Сообщение отправлено.</p></div>`);
-      form.hidden=true; form.reset();
+      form.hidden=true; form.reset(); goal("feedback_sent");
       setTimeout(()=>{ close(); form.hidden=false; const d=dlg.querySelector(".fb-done"); d&&d.remove(); st.textContent=""; },2200);
     }catch(err){
       st.className="st err"; st.textContent="Не получилось отправить. Попробуйте ещё раз чуть позже.";
